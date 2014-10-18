@@ -1,0 +1,7 @@
+---
+
+- name: Create app database
+  raw: mysql -uroot -e "CREATE DATABASE quinieleitor"
+
+- name: Copy settings.php
+  copy: src=settings.php dest=/vagrant/quinieleitor.com/sites/default/files/settings.php

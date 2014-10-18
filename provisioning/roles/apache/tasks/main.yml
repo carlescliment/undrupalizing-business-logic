@@ -1,0 +1,27 @@
+---
+- name: update the apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Apache
+  apt: name=apache2 state=present
+
+- name: Install PHP module for Apache
+  apt: name=libapache2-mod-php5 state=present
+
+- name: Write the apache config file
+  template: src=httpd.j2 dest=/etc/apache2/sites-available/quinieleitor.com
+  notify:
+    - restart apache
+
+- name: Apache | Enable mod rewrite
+  action: command a2enmod rewrite
+
+- name: Apache | Enable our new site
+  action: command a2ensite quinieleitor.com
+
+- name: Apache | Disable default
+  action: command a2dissite default
+
+- name: Start Apache
+  service: name=apache2 state=running enabled=yes

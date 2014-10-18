@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  sudo: yes
+  roles:
+    - apache
+    - mysql
+    - php5-fpm
+    - app

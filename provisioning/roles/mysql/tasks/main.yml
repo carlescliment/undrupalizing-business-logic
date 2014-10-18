@@ -1,0 +1,11 @@
+---
+- name: Install MySQL server
+  apt: name=mysql-server state=present
+
+- name: Install MySQL client
+  apt: name=mysql-client state=present
+
+- name: Create Mysql configuration file
+  template: src=my.cnf dest=/etc/my.cnf
+  notify:
+    - restart mysql

@@ -1,0 +1,56 @@
+---
+
+- name: Install php5-fpm
+  apt: >
+    name={{ item }}
+    state=present
+  with_items:
+    - php-apc
+    - php-pear
+    - php5-cli
+    - php5-gd
+    - php5-curl
+    - php5-fpm
+    - php5-mysql
+  tags:
+    - php5-fpm
+
+- name: Configure php.ini
+  ini_file: >
+    dest=/etc/php5/fpm/php.ini
+    section=PHP
+    option="{{ item.option }}"
+    value="{{ item.value }}"
+  with_items: php_ini_settings
+  notify:
+    - restart php-fpm  
+  tags:
+    - php5-fpm
+
+- name: Configuring /etc/php5/fpm/pool.d/www.conf
+  ini_file: >
+    dest=/etc/php5/fpm/pool.d/www.conf
+    section=www
+    option="{{ item.option }}"
+    value="{{ item.value }}"
+    backup=yes
+  with_items: www_conf_settings
+  notify:
+    - restart php-fpm
+  tags:
+    - php5-fpm
+
+- name: Check php-fpm syntax of configuration files
+  command: php5-fpm -t
+  register: result
+  changed_when: "result.rc != 0"
+  notify:
+    - restart php-fpm
+  tags:
+    - php5-fpm
+
+
+- name: Start the php5-fpm service
+  service: name=php5-fpm state=started enabled=yes
+  tags:
+    - php5-fpm
