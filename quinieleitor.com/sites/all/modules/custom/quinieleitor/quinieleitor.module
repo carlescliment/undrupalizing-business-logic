@@ -1,3 +1,21 @@
 <?php
 
+/**
+ * Implements hook_menu()
+ */
+function quinieleitor_menu() {
+  $items = array();
+  $items['admin/quinieleitor/add'] = array(
+    'title' => 'Add a betting slip',
+    'page callback' => 'quinieleitor_add_betting_slip_page',
+    'access arguments' => array('add betting slips'),
+    'type' => MENU_NORMAL_ITEM,
+  );
 
+  return $items;
+}
+
+function quinieleitor_add_betting_slip_page()
+{
+  return 'Hey!';
+}

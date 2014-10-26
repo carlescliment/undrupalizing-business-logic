@@ -2,6 +2,8 @@
 
 class QuinieleitorTest extends DrupalWebTestCase {
 
+  private $users = array();
+
   function getInfo() {
     return array(
       'name' => 'Quinieleitor functional tests',
@@ -12,9 +14,12 @@ class QuinieleitorTest extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp('quinieleitor');
+    $this->users['non_admin'] = $this->drupalCreateUser(array('access content'));
   }
 
-  function testRunsProperly() {
-    $this->assertTrue(true);
+  function testNonAdminsCannotCreateABettingSlip() {
+    $this->drupalLogin($this->users['non_admin']);
+    $this->drupalGet('admin/quinieleitor/add');
+    $this->assertResponse(403, 'Non admins cannot create a betting slip.');
   }
 }
