@@ -1,0 +1,20 @@
+<?php
+
+class QuinieleitorTest extends DrupalWebTestCase {
+
+  function getInfo() {
+    return array(
+      'name' => 'Quinieleitor functional tests',
+      'description' => '',
+      'group' => 'Quinieleitor'
+    );
+  }
+
+  function setUp() {
+    parent::setUp('quinieleitor');
+  }
+
+  function testRunsProperly() {
+    $this->assertTrue(true);
+  }
+}

@@ -1,0 +1,4 @@
+name = Quinieleitor
+description = Quinieleitor, the betting game
+core = 6.x
+package = Quinieleitor
