@@ -1,7 +1,11 @@
 ---
 
 - name: Create app database
-  raw: mysql -uroot -e "CREATE DATABASE quinieleitor"
+  command: mysql -uroot -e "CREATE DATABASE quinieleitor"
+  ignore_errors: yes
 
 - name: Copy settings.php
   copy: src=settings.php dest=/vagrant/quinieleitor.com/sites/default/files/settings.php
+
+- name: Install drush
+  apt: name=drush update_cache=yes
