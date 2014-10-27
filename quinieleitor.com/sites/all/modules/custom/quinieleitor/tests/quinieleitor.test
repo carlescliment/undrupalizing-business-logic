@@ -12,14 +12,48 @@ class QuinieleitorTest extends DrupalWebTestCase {
     );
   }
 
+
   function setUp() {
     parent::setUp('quinieleitor');
     $this->users['non_admin'] = $this->drupalCreateUser(array('access content'));
+    $this->users['admin'] = $this->drupalCreateUser(array('access content', 'add betting slips'));
   }
 
+
   function testNonAdminsCannotCreateABettingSlip() {
+    // Arrange
     $this->drupalLogin($this->users['non_admin']);
+
+    // Act
     $this->drupalGet('admin/quinieleitor/add');
+
+    // Assert
     $this->assertResponse(403, 'Non admins cannot create a betting slip.');
+  }
+
+
+  function testAdminsCanCreateABettingSlip() {
+    // Arrange
+    $this->drupalLogin($this->users['admin']);
+    $betting_slip = array(
+      'date' => '2014-08-24',
+      'matches[0]' => 'SEV-VAL',
+      'matches[1]' => 'ALM-ESP',
+      'matches[2]' => 'CEL-GET',
+      'matches[3]' => 'RMA-COR',
+      'matches[4]' => 'EIB-RSO',
+      'matches[5]' => 'RAY-ATM',
+      'matches[6]' => 'GRA-DEP',
+      'matches[7]' => 'FCB-ELC',
+      'matches[8]' => 'LEV-VIL',
+      'matches[9]' => 'MAL-ATH',
+    );
+
+    // Act
+    $this->drupalPost('admin/quinieleitor/add', $betting_slip, 'Add');
+
+    // Assert
+    $slips = quinieleitor_get_betting_slips();
+    $this->assertEqual(1, count($slips));
   }
 }
