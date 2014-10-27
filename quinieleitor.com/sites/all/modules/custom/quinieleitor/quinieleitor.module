@@ -10,6 +10,7 @@ function quinieleitor_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('quinieleitor_add_betting_slip_form'),
     'access arguments' => array('add betting slips'),
+    'file' => 'quinieleitor.admin.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -24,50 +25,6 @@ function quinieleitor_perm() {
   return array('add betting slips');
 }
 
-/**
- * Renders the form to add a betting slip
- */
-function quinieleitor_add_betting_slip_form(&$form_state) {
-  $form = array();
-  $form['date'] = array(
-    '#type' => 'textfield',
-    '#title' => 'Date',
-    '#description' => 'Format YYYY-mm-dd',
-    '#required' => TRUE,
-    '#defaul_value' => isset($form_state['values']['date']) ? $form_state['values']['date'] : '',
-  );
-  $form['matches'] = array(
-      '#tree' => true,
-  );
-  for ($i=0; $i<10; $i++) {
-    $form["matches"][$i] = array(
-      '#type' => 'textfield',
-      '#title' => 'Match '.($i+1),
-      '#description' => 'I.e.: RMA-FCB',
-      '#required' => TRUE,
-      '#default_value' => isset($form_state['values']['matches'][$i]) ? $form_state['values']['matches'][$i] : '',
-    );
-  }
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => 'Add',
-  );
-
-  return $form;
-}
-
-function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
-  debug('they call me');
-  $betting_slip = new stdClass;
-  $betting_slip->date = $form_state['values']['date'];
-  drupal_write_record('betting_slips', $betting_slip);
-  foreach ($form_state['values']['matches'] as $match_name) {
-    $match = new stdClass;
-    $match->name = $match_name;
-    $match->slip_id = $betting_slip->id;
-    drupal_write_record('matches', $match);
-  }
-}
 
 function quinieleitor_get_betting_slips() {
   $slips = array();
