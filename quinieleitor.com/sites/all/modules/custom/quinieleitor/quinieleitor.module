@@ -1,5 +1,7 @@
 <?php
 
+define('MATCHES_PER_SLIP', 10);
+
 /**
  * Implements hook_menu()
  */
@@ -13,6 +15,13 @@ function quinieleitor_menu() {
     'file' => 'quinieleitor.admin.inc',
     'type' => MENU_NORMAL_ITEM,
   );
+  $items['bet'] = array(
+    'title' => 'Access to the current betting slip',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('quinieleitor_bet_form'),
+    'access arguments' => array('bet'),
+    'type' => MENU_NORMAL_ITEM,
+  );
 
   return $items;
 }
@@ -22,11 +31,42 @@ function quinieleitor_menu() {
  * Implements hook_perm()
  */
 function quinieleitor_perm() {
-  return array('add betting slips');
+  return array('add betting slips', 'bet');
 }
 
 
-function quinieleitor_get_betting_slips() {
+function quinieleitor_bet_form(&$form_state) {
+  $betting_slip = quinieleitor_load_current_slip();
+  $form = array(
+    '#prefix' => "<div id='add-slip-{$betting_slip->id}'>",
+    '#suffix' => "</div>",
+  );
+  $form['matches'] = array(
+    '#tree' => true,
+  );
+  foreach ($betting_slip->matches as $match) {
+    $form['matches'][$match->id] = array(
+      '#type' => 'textfield',
+      '#title' => $match->name,
+      '#required' => TRUE,
+      '#default_value' => isset($form_state['matches'][$match->id]) ? $form_state['matches'][$match->id] : '',
+    );
+  }
+
+  return $form;
+}
+
+
+function quinieleitor_load_current_slip() {
+  $results = db_query('SELECT * FROM {betting_slips} WHERE date>NOW() ORDER BY date ASC LIMIT 1');
+  $slip = db_fetch_object($results);
+  $slip->matches = quinieleitor_load_slip_matches($slip->id);
+
+  return $slip;
+}
+
+
+function quinieleitor_load_betting_slips() {
   $slips = array();
   $results = db_query('SELECT * FROM {betting_slips} ORDER BY date ASC');
   while ($slip = db_fetch_object($results)) {
@@ -45,4 +85,12 @@ function quinieleitor_load_slip_matches($slip_id) {
   }
 
   return $matches;
+}
+
+function quinieleitor_save_betting_slip($betting_slip) {
+  drupal_write_record('betting_slips', $betting_slip);
+  foreach ($betting_slip->matches as $match) {
+    $match->slip_id = $betting_slip->id;
+    drupal_write_record('matches', $match);
+  }
 }

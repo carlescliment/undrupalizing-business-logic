@@ -1,7 +1,5 @@
 <?php
 
-define('MATCHES_PER_SLIP', 10);
-
 /**
  * Renders the form to add a betting slip
  */
@@ -12,7 +10,7 @@ function quinieleitor_add_betting_slip_form(&$form_state) {
     '#title' => 'Date',
     '#description' => 'Format YYYY-mm-dd',
     '#required' => TRUE,
-    '#defaul_value' => isset($form_state['values']['date']) ? $form_state['values']['date'] : '',
+    '#default_value' => isset($form_state['values']['date']) ? $form_state['values']['date'] : '',
   );
   $form['matches'] = array(
       '#tree' => true,
@@ -37,12 +35,13 @@ function quinieleitor_add_betting_slip_form(&$form_state) {
 function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
   $betting_slip = new stdClass;
   $betting_slip->date = $form_state['values']['date'];
-  drupal_write_record('betting_slips', $betting_slip);
+  $betting_slip->matches = array();
   foreach ($form_state['values']['matches'] as $match_name) {
     $match = new stdClass;
     $match->name = $match_name;
-    $match->slip_id = $betting_slip->id;
-    drupal_write_record('matches', $match);
+    $betting_slip->matches[] = $match;
   }
-}
 
+  quinieleitor_save_betting_slip($betting_slip);
+  drupal_set_message('The slip has been created');
+}

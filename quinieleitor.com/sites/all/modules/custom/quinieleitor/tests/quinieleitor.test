@@ -15,7 +15,7 @@ class QuinieleitorTest extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp('quinieleitor');
-    $this->users['non_admin'] = $this->drupalCreateUser(array('access content'));
+    $this->users['non_admin'] = $this->drupalCreateUser(array('access content', 'bet'));
     $this->users['admin'] = $this->drupalCreateUser(array('access content', 'add betting slips'));
   }
 
@@ -53,7 +53,7 @@ class QuinieleitorTest extends DrupalWebTestCase {
     $this->drupalPost('admin/quinieleitor/add', $betting_slip, 'Add');
 
     // Assert
-    $slips = quinieleitor_get_betting_slips();
+    $slips = quinieleitor_load_betting_slips();
     $this->assertEqual(1, count($slips));
     $this->assertEqual($slips[0]->matches[0]->name, 'SEV-VAL', sprintf('%s equals expected', $slips[0]->matches[0]->name));
     $this->assertEqual($slips[0]->matches[1]->name, 'ALM-ESP', sprintf('%s equals expected', $slips[0]->matches[1]->name));
@@ -65,5 +65,39 @@ class QuinieleitorTest extends DrupalWebTestCase {
     $this->assertEqual($slips[0]->matches[7]->name, 'FCB-ELC', sprintf('%s equals expected', $slips[0]->matches[7]->name));
     $this->assertEqual($slips[0]->matches[8]->name, 'LEV-VIL', sprintf('%s equals expected', $slips[0]->matches[8]->name));
     $this->assertEqual($slips[0]->matches[9]->name, 'MAL-ATH', sprintf('%s equals expected', $slips[0]->matches[9]->name));
+  }
+
+
+  function testBettersSeeTheCurrentBettingSlip() {
+    // Arrange
+    $tomorrow_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
+    $next_week_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 week')));
+    $this->drupalLogin($this->users['non_admin']);
+
+    // Act
+    $this->drupalGet('bet');
+    debug($this->drupalGetContent());
+
+    // Assert
+    $this->assertPattern(sprintf('/slip\-%d/', $tomorrow_slip->id));
+    $this->assertNoPattern(sprintf('/slip\-%d/', $next_week_slip->id));
+  }
+
+
+  private function createBettingSlipForDate($date_str) {
+    $slip = new stdClass();
+    $slip->date = $date_str;
+    $slip->matches = array();
+    for ($i=0; $i<MATCHES_PER_SLIP; $i++) {
+      $local = $i*2;
+      $visitor = ($i*2)+1;
+      $match = new stdClass();
+      $match->name = "TM$local-TM$visitor";
+      $slip->matches[$i] = $match;
+    }
+    quinieleitor_save_betting_slip($slip);
+
+    return $slip;
+
   }
 }

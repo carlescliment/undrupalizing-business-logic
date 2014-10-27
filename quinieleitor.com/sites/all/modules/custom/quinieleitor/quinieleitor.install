@@ -5,26 +5,6 @@
  */
 function quinieleitor_schema() {
   $schema = array();
-  $schema['betting_slips'] = array(
-    'description' => 'Betting slips betters can bet for',
-    'fields' => array(
-      'id' => array( 
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'date' => array(
-        'type' => 'datetime',
-        'not_null' => TRUE,
-      ),
-    ),
-    'primary key' => array('id'),
-    'indexes' => array(
-      'date_idx' => array('date'),
-    ),
-    'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
-  );
-
 
   $schema['matches'] = array(
     'description' => 'Matches in a betting slip',
@@ -49,6 +29,26 @@ function quinieleitor_schema() {
     'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
   );
 
+  $schema['betting_slips'] = array(
+    'description' => 'Betting slips betters can bet for',
+    'fields' => array(
+      'id' => array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'date' => array(
+        'type' => 'datetime',
+        'not_null' => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'date_idx' => array('date'),
+    ),
+    'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
+  );
+
   return $schema;
 }
 
@@ -58,6 +58,7 @@ function quinieleitor_schema() {
  */
 function quinieleitor_install() {
   drupal_install_schema('quinieleitor');
+  db_query('ALTER TABLE {matches} ADD FOREIGN KEY (slip_id) REFERENCES {betting_slips} (id) ON DELETE CASCADE ON UPDATE CASCADE');
 }
 
 /**
@@ -65,5 +66,4 @@ function quinieleitor_install() {
  */
 function quinieleitor_uninstall() {
   drupal_uninstall_schema('quinieleitor');
-  db_query('ALTER TABLE {matches} ADD FOREIGN KEY (slip_id) REFERENCES {betting_slips} (id) ON DELETE CASCADE ON UPDATE CASCADE');
 }
