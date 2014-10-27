@@ -46,3 +46,38 @@ function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
   quinieleitor_save_betting_slip($betting_slip);
   drupal_set_message('The slip has been created');
 }
+
+
+/**
+ * Renders the form to resolve a betting slip
+ */
+function quinieleitor_resolve_betting_slip_form(&$form_state) {
+  $current_slip = quinieleitor_load_current_slip();
+  $form = array();
+  $form['matches'] = array(
+      '#tree' => true,
+  );
+  foreach ($current_slip->matches as $match) {
+    $form["matches"][$match->id] = array(
+      '#type' => 'textfield',
+      '#title' => $match->name,
+      '#required' => TRUE,
+      '#default_value' => isset($form_state['values']['matches'][$match->id]) ? $form_state['values']['matches'][$match->id] : '',
+    );
+  }
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Resolve',
+  );
+
+  return $form;
+}
+
+
+function quinieleitor_resolve_betting_slip_form_submit($form, &$form_state) {
+  foreach ($form_state['values']['matches'] as $match_id => $result) {
+    db_query('UPDATE {matches} set result="%s" WHERE id=%d', $result, $match_id);
+  }
+
+  drupal_set_message('The slip has been resolved');
+}

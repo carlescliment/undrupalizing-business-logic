@@ -16,7 +16,7 @@ class QuinieleitorTest extends DrupalWebTestCase {
   function setUp() {
     parent::setUp('quinieleitor');
     $this->users['non_admin'] = $this->drupalCreateUser(array('access content', 'bet'));
-    $this->users['admin'] = $this->drupalCreateUser(array('access content', 'add betting slips'));
+    $this->users['admin'] = $this->drupalCreateUser(array('access content', 'add betting slips', 'resolve betting slips'));
   }
 
 
@@ -32,7 +32,7 @@ class QuinieleitorTest extends DrupalWebTestCase {
   }
 
 
-  function testAdminsCanCreateABettingSlip() {
+  function testAdminsCreateBettingSlips() {
     // Arrange
     $this->drupalLogin($this->users['admin']);
     $betting_slip = array(
@@ -67,6 +67,26 @@ class QuinieleitorTest extends DrupalWebTestCase {
     $this->assertEqual($slips[0]->matches[9]->name, 'MAL-ATH', sprintf('%s equals expected', $slips[0]->matches[9]->name));
   }
 
+
+  function testAdminsResolveBettingSlips() {
+    // Arrange
+    $current_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
+    $results = array();
+    foreach ($current_slip->matches as $match) {
+      $results["matches[{$match->id}]"] = '1';
+    }
+    $this->drupalLogin($this->users['admin']);
+
+    // Act
+    $this->drupalPost('admin/quinieleitor/resolve', $results, 'Resolve');
+
+    // Assert
+    $saved_slip = quinieleitor_load_current_slip();
+    $this->assertEqual(MATCHES_PER_SLIP, count($saved_slip->matches));
+    foreach ($saved_slip->matches as $match) {
+      $this->assertEqual(1, $match->result);
+    }
+  }
 
   function testBettersBetForCurrentBettingSlip() {
     // Arrange

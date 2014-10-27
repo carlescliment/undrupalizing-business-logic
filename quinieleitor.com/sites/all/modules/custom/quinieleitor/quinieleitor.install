@@ -55,6 +55,11 @@ function quinieleitor_schema() {
         'length' => 7,
         'not_null' => TRUE,
       ),
+      'result' => array(
+        'type' => 'varchar',
+        'length' => 1,
+        'not_null' => FALSE,
+      ),
     ),
     'primary key' => array('id'),
     'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
