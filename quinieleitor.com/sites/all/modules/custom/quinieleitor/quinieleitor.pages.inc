@@ -3,6 +3,7 @@
 
 function quinieleitor_bet_form(&$form_state) {
   $betting_slip = quinieleitor_load_current_slip();
+  $form_state['betting_slip_id'] = $betting_slip->id;
   $form = array(
     '#prefix' => "<div id='add-slip-{$betting_slip->id}'>",
     '#suffix' => "</div>",
@@ -18,6 +19,26 @@ function quinieleitor_bet_form(&$form_state) {
       '#default_value' => isset($form_state['matches'][$match->id]) ? $form_state['matches'][$match->id] : '',
     );
   }
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Bet',
+  );
 
   return $form;
+}
+
+function quinieleitor_bet_form_submit($form, &$form_state) {
+  global $user;
+  $bet = new stdClass;
+  $bet->matches = array();
+  foreach ($form_state['values']['matches'] as $match_id => $prediction) {
+    $match = new stdClass;
+    $match->user_id = $user->uid;
+    $match->match_id = $match_id;
+    $match->prediction = $prediction;
+    $bet->matches[] = $match;
+  }
+
+  quinieleitor_save_bet($bet);
+  drupal_set_message('Your bet has been submitted. Good luck!');
 }

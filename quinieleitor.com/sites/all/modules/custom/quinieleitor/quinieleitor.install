@@ -6,6 +6,37 @@
 function quinieleitor_schema() {
   $schema = array();
 
+  $schema['bets'] = array(
+    'description' => 'Matches in a betting slip',
+    'fields' => array(
+      'id' => array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'user_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not_null' => TRUE,
+      ),
+      'match_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not_null' => TRUE,
+      ),
+      'prediction' => array(
+        'type' => 'varchar',
+        'length' => 1,
+        'not_null' => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
+    'indexes' => array(
+      'user_match_idx' => array('user_id', 'match_id'),
+    ),
+  );
+
   $schema['matches'] = array(
     'description' => 'Matches in a betting slip',
     'fields' => array(
@@ -59,6 +90,7 @@ function quinieleitor_schema() {
 function quinieleitor_install() {
   drupal_install_schema('quinieleitor');
   db_query('ALTER TABLE {matches} ADD FOREIGN KEY (slip_id) REFERENCES {betting_slips} (id) ON DELETE CASCADE ON UPDATE CASCADE');
+  db_query('ALTER TABLE {bets} ADD FOREIGN KEY (match_id) REFERENCES {matches} (id) ON DELETE CASCADE ON UPDATE CASCADE');
 }
 
 /**

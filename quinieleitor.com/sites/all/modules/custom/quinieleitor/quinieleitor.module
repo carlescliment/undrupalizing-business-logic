@@ -45,6 +45,19 @@ function quinieleitor_load_current_slip() {
 }
 
 
+function quinieleitor_load_better_slip($uid, $slip_id) {
+  $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d and m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
+  $bet = new stdClass();
+  $bet->slip_id = $slip_id;
+  $bet->matches = array();
+  while ($match = db_fetch_object($results)) {
+    $bet->matches[] = $match;
+  }
+
+  return $bet;
+}
+
+
 function quinieleitor_load_betting_slips() {
   $slips = array();
   $results = db_query('SELECT * FROM {betting_slips} ORDER BY date ASC');
@@ -71,5 +84,12 @@ function quinieleitor_save_betting_slip($betting_slip) {
   foreach ($betting_slip->matches as $match) {
     $match->slip_id = $betting_slip->id;
     drupal_write_record('matches', $match);
+  }
+}
+
+
+function quinieleitor_save_bet($bet) {
+  foreach ($bet->matches as $match_bet) {
+    drupal_write_record('bets', $match_bet);
   }
 }
