@@ -17,8 +17,7 @@ function quinieleitor_menu() {
   );
   $items['bet'] = array(
     'title' => 'Access to the current betting slip',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('quinieleitor_bet_form'),
+    'page callback' => 'quinieleitor_bet_page',
     'access arguments' => array('bet'),
     'file' => 'quinieleitor.pages.inc',
     'type' => MENU_NORMAL_ITEM,
@@ -39,7 +38,9 @@ function quinieleitor_perm() {
 function quinieleitor_load_current_slip() {
   $results = db_query('SELECT * FROM {betting_slips} WHERE date>NOW() ORDER BY date ASC LIMIT 1');
   $slip = db_fetch_object($results);
-  $slip->matches = quinieleitor_load_slip_matches($slip->id);
+  if ($slip) {
+    $slip->matches = quinieleitor_load_slip_matches($slip->id);
+  }
 
   return $slip;
 }

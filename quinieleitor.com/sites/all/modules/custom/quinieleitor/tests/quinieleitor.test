@@ -89,6 +89,18 @@ class QuinieleitorTest extends DrupalWebTestCase {
   }
 
 
+  function testBettersDoNotGetAnErrorIfThereIsNoCurrentBettingSlip() {
+    // Arrange
+    $this->drupalLogin($this->users['non_admin']);
+
+    // Act
+    $this->drupalGet('bet');
+
+    // Assert
+    $this->assertText('No betting slips have been created yet');
+  }
+
+
   private function createBettingSlipForDate($date_str) {
     $slip = new stdClass();
     $slip->date = $date_str;

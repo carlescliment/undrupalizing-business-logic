@@ -1,8 +1,16 @@
 <?php
 
-
-function quinieleitor_bet_form(&$form_state) {
+function quinieleitor_bet_page() {
   $betting_slip = quinieleitor_load_current_slip();
+  if ($betting_slip) {
+    return drupal_get_form('quinieleitor_bet_form', $betting_slip);
+  }
+
+  return 'No betting slips have been created yet';
+}
+
+
+function quinieleitor_bet_form(&$form_state, $betting_slip) {
   $form_state['betting_slip_id'] = $betting_slip->id;
   $form = array(
     '#prefix' => "<div id='add-slip-{$betting_slip->id}'>",
@@ -26,6 +34,7 @@ function quinieleitor_bet_form(&$form_state) {
 
   return $form;
 }
+
 
 function quinieleitor_bet_form_submit($form, &$form_state) {
   global $user;
