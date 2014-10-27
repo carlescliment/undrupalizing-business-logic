@@ -76,7 +76,6 @@ class QuinieleitorTest extends DrupalWebTestCase {
 
     // Act
     $this->drupalGet('bet');
-    debug($this->drupalGetContent());
 
     // Assert
     $this->assertPattern(sprintf('/slip\-%d/', $tomorrow_slip->id));

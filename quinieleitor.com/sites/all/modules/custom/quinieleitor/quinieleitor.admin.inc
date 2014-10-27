@@ -32,6 +32,7 @@ function quinieleitor_add_betting_slip_form(&$form_state) {
   return $form;
 }
 
+
 function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
   $betting_slip = new stdClass;
   $betting_slip->date = $form_state['values']['date'];

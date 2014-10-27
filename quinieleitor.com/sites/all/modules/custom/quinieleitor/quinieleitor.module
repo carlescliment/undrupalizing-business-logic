@@ -20,6 +20,7 @@ function quinieleitor_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('quinieleitor_bet_form'),
     'access arguments' => array('bet'),
+    'file' => 'quinieleitor.pages.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -32,28 +33,6 @@ function quinieleitor_menu() {
  */
 function quinieleitor_perm() {
   return array('add betting slips', 'bet');
-}
-
-
-function quinieleitor_bet_form(&$form_state) {
-  $betting_slip = quinieleitor_load_current_slip();
-  $form = array(
-    '#prefix' => "<div id='add-slip-{$betting_slip->id}'>",
-    '#suffix' => "</div>",
-  );
-  $form['matches'] = array(
-    '#tree' => true,
-  );
-  foreach ($betting_slip->matches as $match) {
-    $form['matches'][$match->id] = array(
-      '#type' => 'textfield',
-      '#title' => $match->name,
-      '#required' => TRUE,
-      '#default_value' => isset($form_state['matches'][$match->id]) ? $form_state['matches'][$match->id] : '',
-    );
-  }
-
-  return $form;
 }
 
 
