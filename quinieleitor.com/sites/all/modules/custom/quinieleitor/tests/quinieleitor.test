@@ -68,21 +68,6 @@ class QuinieleitorTest extends DrupalWebTestCase {
   }
 
 
-  function testBettersSeeTheCurrentBettingSlip() {
-    // Arrange
-    $tomorrow_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
-    $next_week_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 week')));
-    $this->drupalLogin($this->users['non_admin']);
-
-    // Act
-    $this->drupalGet('bet');
-
-    // Assert
-    $this->assertPattern(sprintf('/slip\-%d/', $tomorrow_slip->id));
-    $this->assertNoPattern(sprintf('/slip\-%d/', $next_week_slip->id));
-  }
-
-
   function testBettersBetForCurrentBettingSlip() {
     // Arrange
     $current_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
