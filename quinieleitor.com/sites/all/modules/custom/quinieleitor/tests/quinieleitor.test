@@ -55,5 +55,15 @@ class QuinieleitorTest extends DrupalWebTestCase {
     // Assert
     $slips = quinieleitor_get_betting_slips();
     $this->assertEqual(1, count($slips));
+    $this->assertEqual($slips[0]->matches[0]->name, 'SEV-VAL', sprintf('%s equals expected', $slips[0]->matches[0]->name));
+    $this->assertEqual($slips[0]->matches[1]->name, 'ALM-ESP', sprintf('%s equals expected', $slips[0]->matches[1]->name));
+    $this->assertEqual($slips[0]->matches[2]->name, 'CEL-GET', sprintf('%s equals expected', $slips[0]->matches[2]->name));
+    $this->assertEqual($slips[0]->matches[3]->name, 'RMA-COR', sprintf('%s equals expected', $slips[0]->matches[3]->name));
+    $this->assertEqual($slips[0]->matches[4]->name, 'EIB-RSO', sprintf('%s equals expected', $slips[0]->matches[4]->name));
+    $this->assertEqual($slips[0]->matches[5]->name, 'RAY-ATM', sprintf('%s equals expected', $slips[0]->matches[5]->name));
+    $this->assertEqual($slips[0]->matches[6]->name, 'GRA-DEP', sprintf('%s equals expected', $slips[0]->matches[6]->name));
+    $this->assertEqual($slips[0]->matches[7]->name, 'FCB-ELC', sprintf('%s equals expected', $slips[0]->matches[7]->name));
+    $this->assertEqual($slips[0]->matches[8]->name, 'LEV-VIL', sprintf('%s equals expected', $slips[0]->matches[8]->name));
+    $this->assertEqual($slips[0]->matches[9]->name, 'MAL-ATH', sprintf('%s equals expected', $slips[0]->matches[9]->name));
   }
 }

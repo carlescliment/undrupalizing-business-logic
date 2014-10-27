@@ -30,7 +30,19 @@ function quinieleitor_get_betting_slips() {
   $slips = array();
   $results = db_query('SELECT * FROM {betting_slips} ORDER BY date ASC');
   while ($slip = db_fetch_object($results)) {
+    $slip->matches = quinieleitor_load_slip_matches($slip->id);
     $slips[] = $slip;
   }
   return $slips;
+}
+
+
+function quinieleitor_load_slip_matches($slip_id) {
+  $matches = array();
+  $results = db_query('SELECT * FROM {matches} WHERE slip_id=%d ORDER BY id ASC', $slip_id);
+  while ($match = db_fetch_object($results)) {
+    $matches[] = $match;
+  }
+
+  return $matches;
 }
