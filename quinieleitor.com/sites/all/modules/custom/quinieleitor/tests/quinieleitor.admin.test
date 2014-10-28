@@ -1,13 +1,13 @@
 <?php
 
-class QuinieleitorTest extends DrupalWebTestCase {
+class QuinieleitorAdminTest extends DrupalWebTestCase {
 
   private $users = array();
 
   function getInfo() {
     return array(
-      'name' => 'Quinieleitor functional tests',
-      'description' => '',
+      'name' => 'Quinieleitor admin',
+      'description' => 'Functional tests for administrators',
       'group' => 'Quinieleitor'
     );
   }
@@ -15,20 +15,7 @@ class QuinieleitorTest extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp('quinieleitor');
-    $this->users['non_admin'] = $this->drupalCreateUser(array('access content', 'bet'));
     $this->users['admin'] = $this->drupalCreateUser(array('access content', 'add betting slips', 'resolve betting slips'));
-  }
-
-
-  function testNonAdminsCannotCreateABettingSlip() {
-    // Arrange
-    $this->drupalLogin($this->users['non_admin']);
-
-    // Act
-    $this->drupalGet('admin/quinieleitor/add');
-
-    // Assert
-    $this->assertResponse(403, 'Non admins cannot create a betting slip.');
   }
 
 
@@ -87,39 +74,6 @@ class QuinieleitorTest extends DrupalWebTestCase {
       $this->assertEqual(1, $match->result);
     }
   }
-
-  function testBettersBetForCurrentBettingSlip() {
-    // Arrange
-    $current_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
-    $bet = array();
-    foreach ($current_slip->matches as $match) {
-      $bet["matches[{$match->id}]"] = '1';
-    }
-    $this->drupalLogin($this->users['non_admin']);
-
-    // Act
-    $this->drupalPost('bet', $bet, 'Bet');
-
-    // Assert
-    $player_slip = quinieleitor_load_better_slip($this->users['non_admin']->uid, $current_slip->id);
-    $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->matches));
-    foreach ($player_slip->matches as $match) {
-      $this->assertEqual(1, $match->prediction);
-    }
-  }
-
-
-  function testBettersDoNotGetAnErrorIfThereIsNoCurrentBettingSlip() {
-    // Arrange
-    $this->drupalLogin($this->users['non_admin']);
-
-    // Act
-    $this->drupalGet('bet');
-
-    // Assert
-    $this->assertText('No betting slips have been created yet');
-  }
-
 
   private function createBettingSlipForDate($date_str) {
     $slip = new stdClass();
