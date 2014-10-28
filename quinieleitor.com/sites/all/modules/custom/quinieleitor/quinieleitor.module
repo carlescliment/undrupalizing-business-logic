@@ -113,3 +113,9 @@ function quinieleitor_save_bet($bet) {
     drupal_write_record('bets', $match_bet);
   }
 }
+
+function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
+  foreach ($better_slips as $better_slip) {
+    $better_slip->prize = 0;
+  }
+}

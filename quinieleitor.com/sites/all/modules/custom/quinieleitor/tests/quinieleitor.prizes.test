@@ -1,0 +1,91 @@
+<?php
+
+class QuinieleitorPrizesTest extends DrupalUnitTestCase {
+
+  private $prizeTable;
+
+
+  function getInfo() {
+    return array(
+      'name' => 'Quinieleitor prizes',
+      'description' => 'Unit tests for the calculation of prizes',
+      'group' => 'Quinieleitor'
+    );
+  }
+
+
+  function setUp() {
+    $this->prizeTable = array(
+      10 => 0.4,
+       9 => 0.2,
+       8 => 0.12,
+       7 => 0.08,
+     );
+  }
+
+
+  function testParticipantHasNoPrice() {
+    // Arrange
+    $slips = array(
+      $this->createBetterSlip(array(
+        1 => '1',
+        2 => '1',
+        3 => '1',
+        4 => '1',
+        5 => '1',
+        6 => '1',
+        7 => '1',
+        8 => '1',
+        9 => '1',
+        10 => '1',
+      )),
+    );
+    $result = $this->createResultSlip(array(
+      1 => '2',
+      2 => '2',
+      3 => '2',
+      4 => '2',
+      5 => '2',
+      6 => '2',
+      7 => '2',
+      8 => '2',
+      9 => '2',
+      10 => '2',
+    ));
+
+    // Act
+    quinieleitor_calculate_prizes($result, $slips, $this->prizeTable);
+
+    // Assert
+    $this->assertEqual(0, $slips[0]->prize);
+  }
+
+
+  private function createBetterSlip($matches) {
+    $slip = new stdClass();
+    $slip->matches = array();
+    foreach ($matches as $match_id => $prediction) {
+      $bet = new stdClass();
+      $bet->match_id = $match_id;
+      $bet->prediction = $prediction;
+      $slip->matches[] = $bet;
+    }
+
+    return $slip;
+  }
+
+
+  private function createResultSlip($matches) {
+    $slip = new stdClass();
+    $slip->matches = array();
+    foreach ($matches as $match_id => $result) {
+      $match = new stdClass();
+      $match->id = $match_id;
+      $match->result = $result;
+      $slip->matches[] = $match;
+    }
+
+    return $slip;
+  }
+
+}
