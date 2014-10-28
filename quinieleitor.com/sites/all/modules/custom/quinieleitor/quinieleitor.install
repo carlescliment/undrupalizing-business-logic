@@ -102,7 +102,29 @@ function quinieleitor_install() {
   drupal_install_schema('quinieleitor');
   db_query('ALTER TABLE {matches} ADD FOREIGN KEY (slip_id) REFERENCES {betting_slips} (id) ON DELETE CASCADE ON UPDATE CASCADE');
   db_query('ALTER TABLE {bets} ADD FOREIGN KEY (match_id) REFERENCES {matches} (id) ON DELETE CASCADE ON UPDATE CASCADE');
+  quinieleitor_install_fixtures();
 }
+
+
+function quinieleitor_install_fixtures() {
+  $betting_slip = new stdClass();
+  $betting_slip->date = '2014-08-24';
+  $betting_slip->matches = array();
+  $betting_slip->matches[] = (object)array('name' => 'SEV-VAL');
+  $betting_slip->matches[] = (object)array('name' => 'ALM-ESP');
+  $betting_slip->matches[] = (object)array('name' => 'CEL-GET');
+  $betting_slip->matches[] = (object)array('name' => 'RMA-COR');
+  $betting_slip->matches[] = (object)array('name' => 'EIB-RSO');
+  $betting_slip->matches[] = (object)array('name' => 'RAY-ATM');
+  $betting_slip->matches[] = (object)array('name' => 'GRA-DEP');
+  $betting_slip->matches[] = (object)array('name' => 'FCB-ELC');
+  $betting_slip->matches[] = (object)array('name' => 'LEV-VIL');
+  $betting_slip->matches[] = (object)array('name' => 'MAL-ATH');
+
+  require_once __DIR__ . '/quinieleitor.module';
+  quinieleitor_save_betting_slip($betting_slip);
+}
+
 
 /**
  * Implements hook_uninstall()

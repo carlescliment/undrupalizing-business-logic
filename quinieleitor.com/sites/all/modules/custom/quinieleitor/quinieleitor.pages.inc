@@ -35,6 +35,21 @@ function quinieleitor_bet_form(&$form_state, $betting_slip) {
   return $form;
 }
 
+/*
+function quinieleitor_bet_form_validate($form, &$form_state) {
+    $slip = quinieleitor_load_slip($form_state['betting_slip_id']);
+    if (!$slip) {
+        form_set_error(null, 'The slip does not exist');
+        return;
+    }
+    if ($slip->closed) {
+        form_set_error(null, 'The slip is closed');
+    }
+
+    return;
+}
+ */
+
 
 function quinieleitor_bet_form_submit($form, &$form_state) {
   global $user;

@@ -19,7 +19,7 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
   }
 
 
-  function testNonAdminsCannotCreateABettingSlip() {
+  function testBettersCannotCreateABettingSlip() {
     // Arrange
     $this->drupalLogin($this->better);
 
