@@ -2,7 +2,7 @@
 
 class QuinieleitorAdminTest extends DrupalWebTestCase {
 
-  private $users = array();
+  private $admin;
 
   function getInfo() {
     return array(
@@ -15,13 +15,13 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp('quinieleitor');
-    $this->users['admin'] = $this->drupalCreateUser(array('access content', 'add betting slips', 'resolve betting slips'));
+    $this->admin = $this->drupalCreateUser(array('access content', 'add betting slips', 'resolve betting slips'));
   }
 
 
   function testAdminsCreateBettingSlips() {
     // Arrange
-    $this->drupalLogin($this->users['admin']);
+    $this->drupalLogin($this->admin);
     $betting_slip = array(
       'date' => '2014-08-24',
       'matches[0]' => 'SEV-VAL',
@@ -62,7 +62,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     foreach ($current_slip->matches as $match) {
       $results["matches[{$match->id}]"] = '1';
     }
-    $this->drupalLogin($this->users['admin']);
+    $this->drupalLogin($this->admin);
 
     // Act
     $this->drupalPost('admin/quinieleitor/resolve', $results, 'Resolve');

@@ -2,7 +2,7 @@
 
 class QuinieleitorBetterTest extends DrupalWebTestCase {
 
-  private $users = array();
+  private $better;
 
   function getInfo() {
     return array(
@@ -15,13 +15,13 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp('quinieleitor');
-    $this->users['better'] = $this->drupalCreateUser(array('access content', 'bet'));
+    $this->better = $this->drupalCreateUser(array('access content', 'bet'));
   }
 
 
   function testNonAdminsCannotCreateABettingSlip() {
     // Arrange
-    $this->drupalLogin($this->users['better']);
+    $this->drupalLogin($this->better);
 
     // Act
     $this->drupalGet('admin/quinieleitor/add');
@@ -38,13 +38,13 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     foreach ($current_slip->matches as $match) {
       $bet["matches[{$match->id}]"] = '1';
     }
-    $this->drupalLogin($this->users['better']);
+    $this->drupalLogin($this->better);
 
     // Act
     $this->drupalPost('bet', $bet, 'Bet');
 
     // Assert
-    $player_slip = quinieleitor_load_better_slip($this->users['better']->uid, $current_slip->id);
+    $player_slip = quinieleitor_load_better_slip($this->better->uid, $current_slip->id);
     $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->matches));
     foreach ($player_slip->matches as $match) {
       $this->assertEqual(1, $match->prediction);
@@ -54,7 +54,7 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
 
   function testBettersDoNotGetAnErrorIfThereIsNoCurrentBettingSlip() {
     // Arrange
-    $this->drupalLogin($this->users['better']);
+    $this->drupalLogin($this->better);
 
     // Act
     $this->drupalGet('bet');
