@@ -44,7 +44,18 @@ function quinieleitor_perm() {
 
 
 function quinieleitor_load_current_slip() {
-  $results = db_query('SELECT * FROM {betting_slips} WHERE date>NOW() ORDER BY date ASC LIMIT 1');
+  $results = db_query('SELECT * FROM {betting_slips} WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
+  $slip = db_fetch_object($results);
+  if ($slip) {
+    $slip->matches = quinieleitor_load_slip_matches($slip->id);
+  }
+
+  return $slip;
+}
+
+
+function quinieleitor_load_slip($slip_id) {
+  $results = db_query('SELECT * FROM {betting_slips} WHERE id=%d', $slip_id);
   $slip = db_fetch_object($results);
   if ($slip) {
     $slip->matches = quinieleitor_load_slip_matches($slip->id);
@@ -55,7 +66,7 @@ function quinieleitor_load_current_slip() {
 
 
 function quinieleitor_load_better_slip($uid, $slip_id) {
-  $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d and m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
+  $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d AND m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
   $bet = new stdClass();
   $bet->slip_id = $slip_id;
   $bet->matches = array();

@@ -77,6 +77,12 @@ function quinieleitor_schema() {
         'type' => 'datetime',
         'not_null' => TRUE,
       ),
+      'closed' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not_null' => TRUE,
+      ),
     ),
     'primary key' => array('id'),
     'indexes' => array(

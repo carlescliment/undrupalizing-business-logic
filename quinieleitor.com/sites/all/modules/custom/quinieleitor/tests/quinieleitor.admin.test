@@ -68,12 +68,14 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     $this->drupalPost('admin/quinieleitor/resolve', $results, 'Resolve');
 
     // Assert
-    $saved_slip = quinieleitor_load_current_slip();
+    $saved_slip = quinieleitor_load_slip($current_slip->id);
+    $this->assertTrue($saved_slip->closed);
     $this->assertEqual(MATCHES_PER_SLIP, count($saved_slip->matches));
     foreach ($saved_slip->matches as $match) {
       $this->assertEqual(1, $match->result);
     }
   }
+
 
   private function createBettingSlipForDate($date_str) {
     $slip = new stdClass();
