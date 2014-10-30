@@ -1,8 +1,11 @@
 <?php
 
+require_once __DIR__ . '/quinieleitor_test_helper.inc';
+
 class QuinieleitorAdminTest extends DrupalWebTestCase {
 
   private $admin;
+  private $helper;
 
   function getInfo() {
     return array(
@@ -16,6 +19,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
   function setUp() {
     parent::setUp('quinieleitor');
     $this->admin = $this->drupalCreateUser(array('access content', 'add betting slips', 'resolve betting slips'));
+    $this->helper = new QuinieleitorTestHelper;
   }
 
 
@@ -58,7 +62,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
 
   function testAdminsResolveBettingSlips() {
     // Arrange
-    $current_slip = $this->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
+    $current_slip = $this->helper->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
     $results = array();
     foreach ($current_slip->matches as $match) {
       $results["matches[{$match->id}]"] = '1';
@@ -78,20 +82,4 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
   }
 
 
-  private function createBettingSlipForDate($date_str) {
-    $slip = new stdClass();
-    $slip->date = $date_str;
-    $slip->matches = array();
-    for ($i=0; $i<MATCHES_PER_SLIP; $i++) {
-      $local = $i*2;
-      $visitor = ($i*2)+1;
-      $match = new stdClass();
-      $match->name = "TM$local-TM$visitor";
-      $slip->matches[$i] = $match;
-    }
-    quinieleitor_save_betting_slip($slip);
-
-    return $slip;
-
-  }
 }
