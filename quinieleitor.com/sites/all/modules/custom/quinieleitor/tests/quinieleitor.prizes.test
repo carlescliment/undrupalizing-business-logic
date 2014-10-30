@@ -87,6 +87,42 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
   }
 
 
+  function testTwoBettersWithDifferentNumberOfHitsEarnTheFullReward() {
+    // Arrange
+    $expected_first_prize = 16;
+    $expected_second_prize = 80;
+    $slips = array(
+      $this->createBetterSlipWithMatches(7),
+      $this->createBetterSlipWithMatches(10),
+    );
+
+    // Act
+    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+
+    // Assert
+    $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
+    $this->assertEqual($expected_second_prize, $slips[1]->prize, sprintf('%d matches %d', $slips[1]->prize, $expected_second_prize));
+  }
+
+
+  function testTwoBettersWithTheSameNumberOfHitsShareTheReward() {
+    // Arrange
+    $expected_first_prize = 40;
+    $expected_second_prize = 40;
+    $slips = array(
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+    );
+
+    // Act
+    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+
+    // Assert
+    $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
+    $this->assertEqual($expected_second_prize, $slips[1]->prize, sprintf('%d matches %d', $slips[1]->prize, $expected_second_prize));
+  }
+
+
   private function createBetterSlipWithMatches($num_matches) {
     $matches = array();
     $i = 1;
