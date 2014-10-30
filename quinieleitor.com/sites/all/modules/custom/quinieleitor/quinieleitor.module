@@ -115,6 +115,14 @@ function quinieleitor_save_bet($bet) {
 }
 
 
+function quinieleitor_resolve_betting_slip($slip_id, $matches) {
+  foreach ($matches as $match_id => $result) {
+    db_query('UPDATE {matches} set result="%s" WHERE id=%d', $result, $match_id);
+  }
+  db_query('UPDATE {betting_slips} set closed=1 WHERE id=%d', $slip_id);
+}
+
+
 function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
   $hits_count = quinieleitor_get_hits_count($results_slip, $better_slips);
   foreach ($better_slips as $i => $better_slip) {
