@@ -102,7 +102,6 @@ function quinieleitor_install() {
   drupal_install_schema('quinieleitor');
   db_query('ALTER TABLE {matches} ADD FOREIGN KEY (slip_id) REFERENCES {betting_slips} (id) ON DELETE CASCADE ON UPDATE CASCADE');
   db_query('ALTER TABLE {bets} ADD FOREIGN KEY (match_id) REFERENCES {matches} (id) ON DELETE CASCADE ON UPDATE CASCADE');
-  quinieleitor_install_fixtures();
 }
 
 
