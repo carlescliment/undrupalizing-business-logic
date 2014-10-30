@@ -17,6 +17,20 @@ class QuinieleitorTestHelper
     quinieleitor_save_betting_slip($slip);
 
     return $slip;
+  }
 
+
+  public function betterBetsForSlip($better, $slip, $predictions)
+  {
+    $better_slip = new stdClass();
+    $better_slip->matches = array();
+    foreach (array_values($slip->matches) as $i => $match) {
+        $bet = new stdClass();
+        $bet->match_id = $match->id;
+        $bet->user_id = $better->uid;
+        $bet->prediction = $predictions[$i];
+        $better_slip->matches[] = $bet;
+    }
+    quinieleitor_save_bet($better_slip);
   }
 }

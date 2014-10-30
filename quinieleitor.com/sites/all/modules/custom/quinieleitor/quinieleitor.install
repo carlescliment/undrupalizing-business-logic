@@ -6,6 +6,27 @@
 function quinieleitor_schema() {
   $schema = array();
 
+  $schema['better_points'] = array(
+    'description' => '',
+    'fields' => array(
+      'user_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not_null' => TRUE,
+      ),
+      'points' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not_null' => TRUE,
+      ),
+    ),
+    'primary key' => array('user_id'),
+    'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
+    'indexes' => array(
+      'user_points_idx' => array('points'),
+    ),
+  );
+
   $schema['bets'] = array(
     'description' => 'Matches in a betting slip',
     'fields' => array(
@@ -31,6 +52,9 @@ function quinieleitor_schema() {
       ),
     ),
     'primary key' => array('id'),
+    'unique keys' => array(
+      'uniq_uid_mid' => array('user_id', 'match_id'),
+    ),
     'mysql_suffix' => " DEFAULT CHARACTER SET UTF8 ENGINE = INNODB",
     'indexes' => array(
       'user_match_idx' => array('user_id', 'match_id'),

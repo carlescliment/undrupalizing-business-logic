@@ -94,6 +94,7 @@ function quinieleitor_load_slip_matches($slip_id) {
   $results = db_query('SELECT * FROM {matches} WHERE slip_id=%d ORDER BY id ASC', $slip_id);
   while ($match = db_fetch_object($results)) {
     $matches[$match->id] = $match;
+
   }
 
   return $matches;
@@ -120,6 +121,87 @@ function quinieleitor_resolve_betting_slip($slip_id, $matches) {
     db_query('UPDATE {matches} set result="%s" WHERE id=%d', $result, $match_id);
   }
   db_query('UPDATE {betting_slips} set closed=1 WHERE id=%d', $slip_id);
+
+  module_invoke_all('betting_slip_resolved', $slip_id);
+}
+
+
+/**
+ * Specification of betting_slip_resolved.
+ */
+function hook_betting_slip_resolved($slip_id)
+{
+}
+
+
+/**
+ * Implements hook_betting_slip_resolved.
+ */
+function quinieleitor_betting_slip_resolved($slip_id) {
+  $better_slips = quinieleitor_load_all_bets_for_slip($slip_id);
+
+  quinieleitor_update_all_better_points($slip_id, $better_slips);
+}
+
+
+function quinieleitor_load_all_bets_for_slip($slip_id) {
+  $better_slips = array();
+  $results = db_query('SELECT DISTINCT(b.user_id) FROM {bets} b JOIN {matches} m WHERE b.match_id = m.id AND m.slip_id = %d', $slip_id);
+  while ($row = db_fetch_object($results)) {
+    $better_slips[$row->user_id] = quinieleitor_load_better_slip($row->user_id, $slip_id);
+  }
+
+  return $better_slips;
+}
+
+
+function quinieleitor_update_all_better_points($slip_id, $better_slips) {
+  $result_slip = quinieleitor_load_slip($slip_id);
+  quinieleitor_calculate_prizes($result_slip, $better_slips, quinieleitor_get_prize_table());
+  foreach ($better_slips as $uid => $better_slip) {
+    $current_points = quinieleitor_load_better_points($uid);
+    quinieleitor_update_points_cache_table($uid, $current_points + $better_slip->prize);
+  }
+}
+
+
+function quinieleitor_get_prize_table() {
+  return array(
+    'slip_value' => 100,
+    'prizes' => array(
+      10 => 0.4,
+       9 => 0.2,
+       8 => 0.12,
+       7 => 0.08,
+     ),
+  );
+}
+
+
+function quinieleitor_update_points_cache_table($uid, $points) {
+  $better_points = new stdClass();
+  $better_points->user_id = $uid;
+  $better_points->points = $points;
+  drupal_write_record('better_points', $better_points);
+}
+
+
+function quinieleitor_load_better_points($uid) {
+  $results = db_query('SELECT points FROM {better_points} WHERE user_id=%d', $uid);
+  $row = db_fetch_object($results);
+
+  return $row ? $row->points : 0;
+}
+
+
+function quinieleitor_load_hall_of_fame() {
+  $results = db_query('SELECT * FROM {better_points} ORDER BY points DESC');
+  $hall_of_fame = array();
+  while ($row = db_fetch_object($results)) {
+    $hall_of_fame[] = $row;
+  }
+
+  return $hall_of_fame;
 }
 
 

@@ -6,6 +6,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
 
   private $admin;
   private $helper;
+  private $betters = array();
 
   function getInfo() {
     return array(
@@ -19,6 +20,8 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
   function setUp() {
     parent::setUp('quinieleitor');
     $this->admin = $this->drupalCreateUser(array('access content', 'add betting slips', 'resolve betting slips'));
+    $this->betters[] = $this->drupalCreateUser(array('access content'));
+    $this->betters[] = $this->drupalCreateUser(array('access content'));
     $this->helper = new QuinieleitorTestHelper;
   }
 
@@ -81,5 +84,17 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     }
   }
 
+
+  function testTheClassificationIsUpdatedWhenABettingSlipIsResolved() {
+    $current_slip = $this->helper->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
+    $this->helper->betterBetsForSlip($this->betters[0], $current_slip, array_fill(0, MATCHES_PER_SLIP, '2')); 
+    $this->helper->betterBetsForSlip($this->betters[1], $current_slip, array_fill(0, MATCHES_PER_SLIP, '2')); 
+    $results = array_fill(1, MATCHES_PER_SLIP, '2');
+
+    quinieleitor_resolve_betting_slip($current_slip->id, $results);
+
+    $hall_of_fame = quinieleitor_load_hall_of_fame();
+    $this->assertEqual(2, count($hall_of_fame));
+  }
 
 }
