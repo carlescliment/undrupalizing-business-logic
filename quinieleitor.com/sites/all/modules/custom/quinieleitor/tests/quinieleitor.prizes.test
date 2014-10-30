@@ -123,6 +123,32 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
   }
 
 
+  function testAllTheVeryUnluckyBettersShareTheMaxPrize() {
+    // Arrange
+    $expected_shared_prize = 40;
+    $slips = array(
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+      $this->createBetterSlipWithMatches(10),
+    );
+
+    // Act
+    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+
+    // Assert
+    foreach ($slips as $slip) {
+      $this->assertEqual($expected_shared_prize, $slip->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_shared_prize));
+    }
+  }
+
+
   private function createBetterSlipWithMatches($num_matches) {
     $matches = array();
     $i = 1;
