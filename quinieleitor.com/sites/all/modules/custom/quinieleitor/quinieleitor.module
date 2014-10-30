@@ -67,14 +67,14 @@ function quinieleitor_load_slip($slip_id) {
 
 function quinieleitor_load_better_slip($uid, $slip_id) {
   $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d AND m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
-  $bet = new stdClass();
-  $bet->slip_id = $slip_id;
-  $bet->matches = array();
-  while ($match = db_fetch_object($results)) {
-    $bet->matches[] = $match;
+  $better_slip = new stdClass();
+  $better_slip->slip_id = $slip_id;
+  $better_slip->matches = array();
+  while ($bet = db_fetch_object($results)) {
+    $better_slip->matches[$bet->match_id] = $bet;
   }
 
-  return $bet;
+  return $better_slip;
 }
 
 
@@ -93,7 +93,7 @@ function quinieleitor_load_slip_matches($slip_id) {
   $matches = array();
   $results = db_query('SELECT * FROM {matches} WHERE slip_id=%d ORDER BY id ASC', $slip_id);
   while ($match = db_fetch_object($results)) {
-    $matches[] = $match;
+    $matches[$match->id] = $match;
   }
 
   return $matches;
@@ -116,6 +116,22 @@ function quinieleitor_save_bet($bet) {
 
 function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
   foreach ($better_slips as $better_slip) {
-    $better_slip->prize = 0;
+    $hits = quinieleitor_get_number_of_right_guesses($results_slip, $better_slip);
+    $better_slip->prize = isset($prize_table['prizes'][$hits]) ? $prize_table['slip_value'] * $prize_table['prizes'][$hits] : 0;
   }
+}
+
+function quinieleitor_get_number_of_right_guesses($results_slip, $better_slip) {
+  $hits = 0;
+  foreach ($better_slip->matches as $bet) {
+    $hits += (int) quinieleitor_better_guessed_right_match($bet->match_id, $results_slip, $better_slip);
+  }
+
+  return $hits;
+}
+
+function quinieleitor_better_guessed_right_match($match_id, $results_slip, $better_slip) {
+  $bet = $better_slip->matches[$match_id];
+
+  return $results_slip->matches[$bet->match_id]->result == $bet->prediction;
 }

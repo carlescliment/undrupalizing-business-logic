@@ -3,6 +3,7 @@
 class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
   private $prizeTable;
+  private $resultSlip;
 
 
   function getInfo() {
@@ -16,11 +17,26 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
   function setUp() {
     $this->prizeTable = array(
-      10 => 0.4,
-       9 => 0.2,
-       8 => 0.12,
-       7 => 0.08,
-     );
+      'prizes' => array(
+        10 => 0.4,
+        9 => 0.2,
+        8 => 0.12,
+        7 => 0.08,
+      ),
+      'slip_value' => 100,
+    );
+    $this->resultSlip = $this->createResultSlip(array(
+      1 => '2',
+      2 => '2',
+      3 => '2',
+      4 => '2',
+      5 => '2',
+      6 => '2',
+      7 => '2',
+      8 => '2',
+      9 => '2',
+      10 => '2',
+    ));
   }
 
 
@@ -40,25 +56,40 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
         10 => '1',
       )),
     );
-    $result = $this->createResultSlip(array(
-      1 => '2',
-      2 => '2',
-      3 => '2',
-      4 => '2',
-      5 => '2',
-      6 => '2',
-      7 => '2',
-      8 => '2',
-      9 => '2',
-      10 => '2',
-    ));
 
     // Act
-    quinieleitor_calculate_prizes($result, $slips, $this->prizeTable);
+    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
 
     // Assert
     $this->assertEqual(0, $slips[0]->prize);
   }
+
+
+  function testParticipantGuessedRightSeven() {
+    // Arrange
+    $expected_prize = 8;
+    $slips = array(
+      $this->createBetterSlip(array(
+        1 => '2',
+        2 => '2',
+        3 => '2',
+        4 => '2',
+        5 => '2',
+        6 => '2',
+        7 => '2',
+        8 => '1',
+        9 => '1',
+        10 => '1',
+      )),
+    );
+
+    // Act
+    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+
+    // Assert
+    $this->assertEqual($expected_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_prize));
+  }
+
 
 
   private function createBetterSlip($matches) {
@@ -68,7 +99,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
       $bet = new stdClass();
       $bet->match_id = $match_id;
       $bet->prediction = $prediction;
-      $slip->matches[] = $bet;
+      $slip->matches[$match_id] = $bet;
     }
 
     return $slip;
@@ -82,7 +113,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
       $match = new stdClass();
       $match->id = $match_id;
       $match->result = $result;
-      $slip->matches[] = $match;
+      $slip->matches[$match_id] = $match;
     }
 
     return $slip;
