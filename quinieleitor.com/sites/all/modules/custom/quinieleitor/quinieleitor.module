@@ -114,12 +114,14 @@ function quinieleitor_save_bet($bet) {
   }
 }
 
+
 function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
   foreach ($better_slips as $better_slip) {
     $hits = quinieleitor_get_number_of_right_guesses($results_slip, $better_slip);
-    $better_slip->prize = isset($prize_table['prizes'][$hits]) ? $prize_table['slip_value'] * $prize_table['prizes'][$hits] : 0;
+    $better_slip->prize = quinieleitor_calculate_prize($hits, $prize_table, count($better_slips));
   }
 }
+
 
 function quinieleitor_get_number_of_right_guesses($results_slip, $better_slip) {
   $hits = 0;
@@ -130,8 +132,18 @@ function quinieleitor_get_number_of_right_guesses($results_slip, $better_slip) {
   return $hits;
 }
 
+
 function quinieleitor_better_guessed_right_match($match_id, $results_slip, $better_slip) {
   $bet = $better_slip->matches[$match_id];
 
   return $results_slip->matches[$bet->match_id]->result == $bet->prediction;
+}
+
+
+function quinieleitor_calculate_prize($hits, $prize_table, $num_players) {
+  if (isset($prize_table['prizes'][$hits])) {
+    return $num_players * $prize_table['slip_value'] * $prize_table['prizes'][$hits];
+  }
+
+  return 0;
 }
