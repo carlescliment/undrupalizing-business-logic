@@ -220,11 +220,19 @@ class ResultsSlip
         foreach ($legacy_slip->matches as $match) {
             $slip->add($match);
         }
+
+        return $slip;
     }
 
     public function add($match)
     {
         $this->matches[$match->id] = $match;
+    }
+
+
+    public function getMatch($match_id)
+    {
+        return $this->matches[$match_id];
     }
 }
 
@@ -238,11 +246,28 @@ class BetterSlip
         foreach ($legacy_slip->matches as $bet) {
             $slip->add($bet);
         }
+
+        return $slip;
     }
 
     public function add($bet)
     {
         $this->bets[$bet->match_id] = $bet;
+    }
+
+    public function getHits(ResultsSlip $results_slip)
+    {
+        $hits = 0;
+        foreach ($this->bets as $bet) {
+            $hits += (int) $this->guessedRight($bet, $results_slip);
+        }
+
+        return $hits;
+    }
+
+    private function guessedRight($bet, ResultsSlip $results_slip)
+    {
+        return $results_slip->getMatch($bet->match_id)->result == $bet->prediction;
     }
 }
 
@@ -251,7 +276,7 @@ function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_tabl
   $hits_count = quinieleitor_get_hits_count($results_slip, $better_slips);
   foreach ($better_slips as $i => $better_slip) {
     $better_slip_instance = BetterSlip::createFromLegacy($better_slip);
-    $player_hits = quinieleitor_get_number_of_right_guesses($results_slip, $better_slip);
+    $player_hits = $better_slip_instance->getHits($results_slip_instance);
     $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
     $better_slip->prize = quinieleitor_calculate_prize($player_hits, $prize_table, count($better_slips), $share_with_betters);
   }
