@@ -212,15 +212,20 @@ function quinieleitor_load_hall_of_fame() {
 
 class Match
 {
-    public $id;
-    public $name;
-    public $result;
+    private $id;
+    private $name;
+    private $result;
 
     public function __construct($id, $name, $result = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->result = $result;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function hits($bet)
@@ -246,7 +251,7 @@ class ResultsSlip
 
     public function add(Match $match)
     {
-        $this->matches[$match->id] = $match;
+        $this->matches[$match->getId()] = $match;
     }
 
 
