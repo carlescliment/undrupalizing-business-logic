@@ -170,6 +170,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     $slip->matches = array();
     foreach ($matches as $match_id => $prediction) {
       $bet = new stdClass();
+      $bet->id = null;
       $bet->match_id = $match_id;
       $bet->prediction = $prediction;
       $slip->matches[$match_id] = $bet;
