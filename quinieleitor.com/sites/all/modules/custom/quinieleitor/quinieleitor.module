@@ -230,9 +230,9 @@ class ResultsSlip
     }
 
 
-    public function getMatch($match_id)
+    public function betHits($bet)
     {
-        return $this->matches[$match_id];
+        return $this->matches[$bet->match_id]->result == $bet->prediction;
     }
 }
 
@@ -259,15 +259,10 @@ class BetterSlip
     {
         $hits = 0;
         foreach ($this->bets as $bet) {
-            $hits += (int) $this->guessedRight($bet, $results_slip);
+            $hits += (int) $results_slip->betHits($bet);
         }
 
         return $hits;
-    }
-
-    private function guessedRight($bet, ResultsSlip $results_slip)
-    {
-        return $results_slip->getMatch($bet->match_id)->result == $bet->prediction;
     }
 }
 
