@@ -185,6 +185,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     foreach ($matches as $match_id => $result) {
       $match = new stdClass();
       $match->id = $match_id;
+      $match->name = "Match $match_id";
       $match->result = $result;
       $slip->matches[$match_id] = $match;
     }
