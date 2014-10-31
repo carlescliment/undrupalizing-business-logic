@@ -210,6 +210,21 @@ function quinieleitor_load_hall_of_fame() {
   return $hall_of_fame;
 }
 
+class Match
+{
+    public $id;
+    public $name;
+    public $result;
+
+    public function __construct($id, $name, $result = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->result = $result;
+    }
+
+}
+
 class ResultsSlip
 {
     private $matches = array();
@@ -218,13 +233,13 @@ class ResultsSlip
     {
         $slip = new static();
         foreach ($legacy_slip->matches as $match) {
-            $slip->add($match);
+            $slip->add(new Match($match->id, $match->name, $match->result));
         }
 
         return $slip;
     }
 
-    public function add($match)
+    public function add(Match $match)
     {
         $this->matches[$match->id] = $match;
     }
