@@ -10,6 +10,22 @@ function quinieleitor_bet_page() {
 }
 
 
+function quinieleitor_hall_of_fame_page() {
+    $hall_of_fame = quinieleitor_load_hall_of_fame();
+    if (empty($hall_of_fame)) {
+        return 'Nobody has earned points yet.';
+    }
+
+    $headers = array('Player', 'Points');
+    $rows = array();
+    foreach ($hall_of_fame as $better) {
+        $rows[] = array($better->name, $better->points); 
+    }
+
+    return theme_table($headers, $rows);
+}
+
+
 function quinieleitor_bet_form(&$form_state, $betting_slip) {
   $form_state['betting_slip_id'] = $betting_slip->id;
   $form = array(
@@ -35,7 +51,7 @@ function quinieleitor_bet_form(&$form_state, $betting_slip) {
   return $form;
 }
 
-/*
+
 function quinieleitor_bet_form_validate($form, &$form_state) {
     $slip = quinieleitor_load_slip($form_state['betting_slip_id']);
     if (!$slip) {
@@ -48,7 +64,6 @@ function quinieleitor_bet_form_validate($form, &$form_state) {
 
     return;
 }
- */
 
 
 function quinieleitor_bet_form_submit($form, &$form_state) {

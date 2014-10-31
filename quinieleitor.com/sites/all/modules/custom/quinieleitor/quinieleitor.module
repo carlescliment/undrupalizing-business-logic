@@ -24,8 +24,15 @@ function quinieleitor_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   $items['bet'] = array(
-    'title' => 'Access to the current betting slip',
+    'title' => 'Bet',
     'page callback' => 'quinieleitor_bet_page',
+    'access arguments' => array('bet'),
+    'file' => 'quinieleitor.pages.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['hall-of-fame'] = array(
+    'title' => 'Hall of Fame',
+    'page callback' => 'quinieleitor_hall_of_fame_page',
     'access arguments' => array('bet'),
     'file' => 'quinieleitor.pages.inc',
     'type' => MENU_NORMAL_ITEM,
@@ -159,8 +166,7 @@ function quinieleitor_update_all_better_points($slip_id, $better_slips) {
   $result_slip = quinieleitor_load_slip($slip_id);
   quinieleitor_calculate_prizes($result_slip, $better_slips, quinieleitor_get_prize_table());
   foreach ($better_slips as $uid => $better_slip) {
-    $current_points = quinieleitor_load_better_points($uid);
-    quinieleitor_update_points_cache_table($uid, $current_points + $better_slip->prize);
+    quinieleitor_add_better_points($uid, $better_slip->prize);
   }
 }
 
@@ -178,11 +184,12 @@ function quinieleitor_get_prize_table() {
 }
 
 
-function quinieleitor_update_points_cache_table($uid, $points) {
-  $better_points = new stdClass();
-  $better_points->user_id = $uid;
-  $better_points->points = $points;
-  drupal_write_record('better_points', $better_points);
+function quinieleitor_add_better_points($uid, $points) {
+  $current_points = quinieleitor_load_better_points($points);
+  $score = new stdClass();
+  $score->user_id = $uid;
+  $score->points = $points + $current_points;
+  drupal_write_record('better_points', $score);
 }
 
 
@@ -195,7 +202,7 @@ function quinieleitor_load_better_points($uid) {
 
 
 function quinieleitor_load_hall_of_fame() {
-  $results = db_query('SELECT * FROM {better_points} ORDER BY points DESC');
+  $results = db_query('SELECT * FROM {better_points} p JOIN {users} u ON p.user_id=u.uid ORDER BY points DESC');
   $hall_of_fame = array();
   while ($row = db_fetch_object($results)) {
     $hall_of_fame[] = $row;

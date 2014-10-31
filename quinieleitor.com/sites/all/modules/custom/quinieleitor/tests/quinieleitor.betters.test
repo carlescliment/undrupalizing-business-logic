@@ -66,4 +66,25 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     // Assert
     $this->assertText('No betting slips have been created yet');
   }
+
+
+  function testBettersSeeTheCurrentHallOfFame() {
+    // Arrange
+    $this->drupalLogin($this->better);
+    $competitors = array();
+    for ($i=0; $i<5; $i++) {
+        $competitor = $this->drupalCreateUser(array('access content'));
+        $points = rand(100, 200);
+        quinieleitor_add_better_points($competitor->uid, $points);
+        $competitors[] = array('name' => $competitor->name, 'points' => $points);
+    }
+
+    // Act
+    $this->drupalGet('hall-of-fame');
+
+    // Assert
+    foreach ($competitors as $competitor) {
+        $this->assertPattern(sprintf('/%s.*%s/', $competitor['name'], $competitor['points']));
+    }
+  }
 }
