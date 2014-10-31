@@ -224,6 +224,12 @@ class Bet
         $this->match_id = $match_id;
         $this->prediction = $prediction;
     }
+
+    public function hits(Match $match)
+    {
+        return $match->getResult() == $this->prediction;
+    }
+
 }
 
 class Match
@@ -244,9 +250,9 @@ class Match
         return $this->id;
     }
 
-    public function hits(Bet $bet)
+    public function getResult()
     {
-        return $this->result == $bet->prediction;
+        return $this->result;
     }
 
 }
@@ -273,7 +279,7 @@ class ResultsSlip
 
     public function betHits(Bet $bet)
     {
-        return $this->matches[$bet->match_id]->hits($bet);
+        return $bet->hits($this->matches[$bet->match_id]);
     }
 }
 
