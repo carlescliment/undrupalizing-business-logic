@@ -17,8 +17,7 @@ function quinieleitor_menu() {
   );
   $items['admin/quinieleitor/resolve'] = array(
     'title' => 'Resolve a betting slip',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('quinieleitor_resolve_betting_slip_form'),
+    'page callback' => 'quinieleitor_resolve_betting_slip_page',
     'access arguments' => array('resolve betting slips'),
     'file' => 'quinieleitor.admin.inc',
     'type' => MENU_NORMAL_ITEM,

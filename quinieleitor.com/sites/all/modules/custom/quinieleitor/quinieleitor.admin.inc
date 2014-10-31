@@ -1,5 +1,15 @@
 <?php
 
+function quinieleitor_resolve_betting_slip_page() {
+  $current_slip = quinieleitor_load_current_slip();
+  if (empty($current_slip)) {
+    return 'No slip to resolve found.';
+  }
+
+  return drupal_get_form('quinieleitor_resolve_betting_slip_form', $current_slip);
+}
+
+
 /**
  * Renders the form to add a betting slip
  */
@@ -51,8 +61,7 @@ function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
 /**
  * Renders the form to resolve a betting slip
  */
-function quinieleitor_resolve_betting_slip_form(&$form_state) {
-  $current_slip = quinieleitor_load_current_slip();
+function quinieleitor_resolve_betting_slip_form(&$form_state, $current_slip) {
   $form_state['betting_slip_id'] = $current_slip->id;
   $form = array();
   $form['matches'] = array(
