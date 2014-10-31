@@ -210,8 +210,26 @@ function quinieleitor_load_hall_of_fame() {
   return $hall_of_fame;
 }
 
+class ResultsSlip
+{
+    private $matches = array();
+
+    public static function createFromLegacy($legacy_slip)
+    {
+        $slip = new static();
+        foreach ($legacy_slip->matches as $match) {
+            $slip->add($match);
+        }
+    }
+
+    public function add($match)
+    {
+        $this->matches[$match->id] = $match;
+    }
+}
 
 function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
+  $results_slip_instance = ResultsSlip::createFromLegacy($results_slip);
   $hits_count = quinieleitor_get_hits_count($results_slip, $better_slips);
   foreach ($better_slips as $i => $better_slip) {
     $player_hits = quinieleitor_get_number_of_right_guesses($results_slip, $better_slip);
