@@ -210,6 +210,22 @@ function quinieleitor_load_hall_of_fame() {
   return $hall_of_fame;
 }
 
+
+class Bet
+{
+    public $id;
+    public $match_id;
+    public $prediction;
+
+
+    public function __construct($id, $match_id, $prediction)
+    {
+        $this->id = $id;
+        $this->match_id = $match_id;
+        $this->prediction = $prediction;
+    }
+}
+
 class Match
 {
     private $id;
@@ -228,7 +244,7 @@ class Match
         return $this->id;
     }
 
-    public function hits($bet)
+    public function hits(Bet $bet)
     {
         return $this->result == $bet->prediction;
     }
@@ -255,7 +271,7 @@ class ResultsSlip
     }
 
 
-    public function betHits($bet)
+    public function betHits(Bet $bet)
     {
         return $this->matches[$bet->match_id]->hits($bet);
     }
@@ -269,13 +285,13 @@ class BetterSlip
     {
         $slip = new static();
         foreach ($legacy_slip->matches as $bet) {
-            $slip->add($bet);
+            $slip->add(new Bet($bet->id, $bet->match_id, $bet->prediction));
         }
 
         return $slip;
     }
 
-    public function add($bet)
+    public function add(Bet $bet)
     {
         $this->bets[$bet->match_id] = $bet;
     }
