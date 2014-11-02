@@ -2,7 +2,7 @@
 
 class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
-  private $prizeTable;
+  private $calculator;
   private $resultSlip;
 
 
@@ -16,7 +16,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
 
   function setUp() {
-    $this->prizeTable = array(
+    $prize_table = array(
       'prizes' => array(
         10 => 0.4,
         9 => 0.2,
@@ -25,6 +25,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
       ),
       'slip_value' => 100,
     );
+    $this->calculator = new PrizeCalculator($prize_table);
     $this->resultSlip = $this->createResultSlip(array(
       1 => '2',
       2 => '2',
@@ -47,7 +48,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->calculator);
 
     // Assert
     $this->assertEqual(0, $slips[0]->prize);
@@ -62,7 +63,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->calculator);
 
     // Assert
     $this->assertEqual($expected_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_prize));
@@ -79,7 +80,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->calculator);
 
     // Assert
     $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
@@ -97,7 +98,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->calculator);
 
     // Assert
     $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
@@ -115,7 +116,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->calculator);
 
     // Assert
     $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
@@ -140,7 +141,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->calculator);
 
     // Assert
     foreach ($slips as $slip) {
