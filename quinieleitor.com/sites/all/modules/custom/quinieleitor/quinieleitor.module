@@ -267,6 +267,25 @@ class Match
 
 }
 
+class PrizeCalculator
+{
+    private $prizeTable;
+
+    public function __construct(array $prize_table)
+    {
+        $this->prizeTable = $prize_table;
+    }
+
+    public function calculatePrize($hits, $num_players, $share_with)
+    {
+      if (isset($this->prizeTable['prizes'][$hits])) {
+        return $num_players * $this->prizeTable['slip_value'] * $this->prizeTable['prizes'][$hits] / $share_with;
+      }
+
+      return 0;
+    }
+}
+
 class ResultsSlip
 {
     private $matches = array();
@@ -288,26 +307,18 @@ class ResultsSlip
 
     public function calculatePrizes($better_slips, $prize_table)
     {
+        $calculator = new PrizeCalculator($prize_table);
         $hits_count = $this->getHitsCount($better_slips);
         foreach ($better_slips as $better_slip) {
             $player_hits = $better_slip->getHits($this);
             $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
-            $better_slip->prize = $this->calculatePrize($player_hits, $prize_table, count($better_slips), $share_with_betters);
+            $better_slip->prize = $calculator->calculatePrize($player_hits, count($better_slips), $share_with_betters);
         }
     }
 
     public function betHits(Bet $bet)
     {
         return $bet->hits($this->matches[$bet->getMatchId()]);
-    }
-
-    private function calculatePrize($hits, $prize_table, $num_players, $share_with)
-    {
-      if (isset($prize_table['prizes'][$hits])) {
-        return $num_players * $prize_table['slip_value'] * $prize_table['prizes'][$hits] / $share_with;
-      }
-
-      return 0;
     }
 
     private function getHitsCount($better_slips) 
