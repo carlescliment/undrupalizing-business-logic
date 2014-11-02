@@ -156,7 +156,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
       $matches[$i] = '2';
       $i++;
     }
-    while ($i < MATCHES_PER_SLIP) {
+    while ($i <= MATCHES_PER_SLIP) {
       $matches[$i] = '1';
       $i++;
     }
