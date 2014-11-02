@@ -164,7 +164,11 @@ function quinieleitor_load_all_bets_for_slip($slip_id) {
 function quinieleitor_update_all_better_points($slip_id, $better_slips) {
   $results_slip = ResultsSlip::createFromLegacy(quinieleitor_load_slip($slip_id));
 
-  quinieleitor_calculate_prizes($result_slip, $better_slips, quinieleitor_get_prize_table());
+  $better_slip_instances = array();
+  foreach ($better_slips as $better_slip) {
+    $better_slip_instances[] = BetterSlip::createFromLegacy($better_slip);
+  }
+  quinieleitor_calculate_prizes($result_slip, $better_slip_instances, quinieleitor_get_prize_table());
   foreach ($better_slips as $uid => $better_slip) {
     quinieleitor_add_better_points($uid, $better_slip->prize);
   }
@@ -336,14 +340,9 @@ class BetterSlip
 }
 
 function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
-  $better_slip_instances = array();
-  foreach ($better_slips as $better_slip) {
-    $better_slip_instances[] = BetterSlip::createFromLegacy($better_slip);
-  }
-  $hits_count = $results_slip->getHitsCount($better_slip_instances);
+  $hits_count = $results_slip->getHitsCount($better_slips);
   foreach ($better_slips as $i => $better_slip) {
-    $better_slip_instance = BetterSlip::createFromLegacy($better_slip);
-    $player_hits = $better_slip_instance->getHits($results_slip);
+    $player_hits = $better_slip->getHits($results_slip);
     $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
     $better_slip->prize = quinieleitor_calculate_prize($player_hits, $prize_table, count($better_slips), $share_with_betters);
   }
