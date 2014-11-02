@@ -47,7 +47,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
 
     // Assert
     $this->assertEqual(0, $slips[0]->prize);
@@ -62,7 +62,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
 
     // Assert
     $this->assertEqual($expected_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_prize));
@@ -79,7 +79,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
 
     // Assert
     $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
@@ -97,7 +97,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
 
     // Assert
     $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
@@ -115,7 +115,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
 
     // Assert
     $this->assertEqual($expected_first_prize, $slips[0]->prize, sprintf('%d matches %d', $slips[0]->prize, $expected_first_prize));
@@ -140,7 +140,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
     );
 
     // Act
-    quinieleitor_calculate_prizes($this->resultSlip, $slips, $this->prizeTable);
+    $this->resultSlip->calculatePrizes($slips, $this->prizeTable);
 
     // Assert
     foreach ($slips as $slip) {
