@@ -181,14 +181,10 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
 
   private function createResultSlip($matches) {
-    $slip = new stdClass();
-    $slip->matches = array();
+    $slip = new ResultsSlip();
     foreach ($matches as $match_id => $result) {
-      $match = new stdClass();
-      $match->id = $match_id;
-      $match->name = "Match $match_id";
-      $match->result = $result;
-      $slip->matches[$match_id] = $match;
+      $match = new Match($match_id, "Match $match_id", $result);
+      $slip->add($match);
     }
 
     return $slip;
