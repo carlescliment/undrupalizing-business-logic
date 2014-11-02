@@ -286,7 +286,23 @@ class ResultsSlip
     {
         return $bet->hits($this->matches[$bet->getMatchId()]);
     }
+
+
+    public function getHitsCount($better_slips) 
+    {
+      $hits_count = array();
+      foreach ($better_slips as $better_slip) {
+        $player_hits = $better_slip->getHits($this);
+        if (!isset($hits_count[$player_hits])) {
+          $hits_count[$player_hits] = 0;
+        }
+        $hits_count[$player_hits]++;
+      }
+
+      return $hits_count;
+    }
 }
+
 
 class BetterSlip
 {
@@ -320,44 +336,17 @@ class BetterSlip
 
 function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_table) {
   $results_slip_instance = ResultsSlip::createFromLegacy($results_slip);
-  $hits_count = quinieleitor_get_hits_count($results_slip, $better_slips);
+  $better_slip_instances = array();
+  foreach ($better_slips as $better_slip) {
+    $better_slip_instances[] = BetterSlip::createFromLegacy($better_slip);
+  }
+  $hits_count = $results_slip_instance->getHitsCount($better_slip_instances);
   foreach ($better_slips as $i => $better_slip) {
     $better_slip_instance = BetterSlip::createFromLegacy($better_slip);
     $player_hits = $better_slip_instance->getHits($results_slip_instance);
     $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
     $better_slip->prize = quinieleitor_calculate_prize($player_hits, $prize_table, count($better_slips), $share_with_betters);
   }
-}
-
-
-function quinieleitor_get_hits_count($results_slip, $better_slips) {
-  $hits_count = array();
-  foreach ($better_slips as $i => $better_slip) {
-    $player_hits = quinieleitor_get_number_of_right_guesses($results_slip, $better_slip);
-    if (!isset($hits_count[$player_hits])) {
-      $hits_count[$player_hits] = 0;
-    }
-    $hits_count[$player_hits]++;
-  }
-
-  return $hits_count;
-}
-
-
-function quinieleitor_get_number_of_right_guesses($results_slip, $better_slip) {
-  $hits = 0;
-  foreach ($better_slip->matches as $bet) {
-    $hits += (int) quinieleitor_better_guessed_right_match($bet->match_id, $results_slip, $better_slip);
-  }
-
-  return $hits;
-}
-
-
-function quinieleitor_better_guessed_right_match($match_id, $results_slip, $better_slip) {
-  $bet = $better_slip->matches[$match_id];
-
-  return $results_slip->matches[$bet->match_id]->result == $bet->prediction;
 }
 
 
