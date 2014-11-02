@@ -74,6 +74,7 @@ function quinieleitor_load_slip($slip_id) {
 function quinieleitor_load_better_slip($uid, $slip_id) {
   $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d AND m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
   $better_slip = new stdClass();
+  $better_slip->uid = $uid;
   $better_slip->slip_id = $slip_id;
   $better_slip->matches = array();
   while ($bet = db_fetch_object($results)) {
@@ -165,13 +166,13 @@ function quinieleitor_update_all_better_points($slip_id, $better_slips) {
   $results_slip = ResultsSlip::createFromLegacy(quinieleitor_load_slip($slip_id));
 
   $better_slip_instances = array();
-  foreach ($better_slips as $uid => $better_slip) {
-    $better_slip_instances[$uid] = BetterSlip::createFromLegacy($better_slip);
+  foreach ($better_slips as $better_slip) {
+    $better_slip_instances[$better_slip->uid] = BetterSlip::createFromLegacy($better_slip);
   }
   $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
   $results_slip->calculatePrizes($better_slip_instances, $calculator);
-  foreach ($better_slip_instances as $uid => $better_slip) {
-    quinieleitor_add_better_points($uid, $better_slip->prize);
+  foreach ($better_slip_instances as $better_slip) {
+    quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->prize);
   }
 }
 
@@ -340,11 +341,17 @@ class ResultsSlip
 class BetterSlip
 {
     public $prize = 0;
+    private $userId;
     private $bets = array();
+
+    public function __construct($user_id)
+    {
+        $this->userId = $user_id;
+    }
 
     public static function createFromLegacy($legacy_slip)
     {
-        $slip = new static();
+        $slip = new static($legacy_slip->uid);
         foreach ($legacy_slip->matches as $bet) {
             $slip->add(new Bet($bet->id, $bet->match_id, $bet->prediction));
         }
@@ -365,5 +372,10 @@ class BetterSlip
         }
 
         return $hits;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
     }
 }

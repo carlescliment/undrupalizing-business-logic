@@ -167,7 +167,8 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
 
   private function createBetterSlip($matches) {
-    $slip = new BetterSlip();
+    $user_id = 40;
+    $slip = new BetterSlip($user_id);
     foreach ($matches as $match_id => $prediction) {
       $bet = new Bet(null, $match_id, $prediction);
       $slip->add($bet);
