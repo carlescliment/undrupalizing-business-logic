@@ -286,6 +286,13 @@ class ResultsSlip
         $this->matches[$match->getId()] = $match;
     }
 
+    public function calculatePrize($hits, $prize_table, $num_players, $share_with) {
+      if (isset($prize_table['prizes'][$hits])) {
+        return $num_players * $prize_table['slip_value'] * $prize_table['prizes'][$hits] / $share_with;
+      }
+
+      return 0;
+    }
 
     public function betHits(Bet $bet)
     {
@@ -344,15 +351,6 @@ function quinieleitor_calculate_prizes($results_slip, $better_slips, $prize_tabl
   foreach ($better_slips as $i => $better_slip) {
     $player_hits = $better_slip->getHits($results_slip);
     $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
-    $better_slip->prize = quinieleitor_calculate_prize($player_hits, $prize_table, count($better_slips), $share_with_betters);
+    $better_slip->prize = $results_slip->calculatePrize($player_hits, $prize_table, count($better_slips), $share_with_betters);
   }
-}
-
-
-function quinieleitor_calculate_prize($hits, $prize_table, $num_players, $share_with) {
-  if (isset($prize_table['prizes'][$hits])) {
-    return $num_players * $prize_table['slip_value'] * $prize_table['prizes'][$hits] / $share_with;
-  }
-
-  return 0;
 }
