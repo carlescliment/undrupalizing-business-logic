@@ -310,17 +310,22 @@ class ResultsSlip
         $calculator = new PrizeCalculator($prize_table);
         $hits_count = $this->getHitsCount($better_slips);
         foreach ($better_slips as $better_slip) {
-            $player_hits = $better_slip->getHits($this->matches);
+            $player_hits = $better_slip->getHits($this);
             $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
             $better_slip->prize = $calculator->calculatePrize($player_hits, count($better_slips), $share_with_betters);
         }
+    }
+
+    public function getMatches()
+    {
+        return $this->matches;
     }
 
     private function getHitsCount($better_slips) 
     {
       $hits_count = array();
       foreach ($better_slips as $better_slip) {
-        $player_hits = $better_slip->getHits($this->matches);
+        $player_hits = $better_slip->getHits($this);
         if (!isset($hits_count[$player_hits])) {
           $hits_count[$player_hits] = 0;
         }
@@ -352,10 +357,10 @@ class BetterSlip
         $this->bets[$bet->getMatchId()] = $bet;
     }
 
-    public function getHits(array $matches)
+    public function getHits(ResultsSlip $results_slip)
     {
         $hits = 0;
-        foreach ($matches as $match) {
+        foreach ($results_slip->getMatches() as $match) {
             $hits += $this->bets[$match->getId()]->hits($match);
         }
 
