@@ -296,7 +296,12 @@ class ResultsSlip
         }
     }
 
-    public function calculatePrize($hits, $prize_table, $num_players, $share_with)
+    public function betHits(Bet $bet)
+    {
+        return $bet->hits($this->matches[$bet->getMatchId()]);
+    }
+
+    private function calculatePrize($hits, $prize_table, $num_players, $share_with)
     {
       if (isset($prize_table['prizes'][$hits])) {
         return $num_players * $prize_table['slip_value'] * $prize_table['prizes'][$hits] / $share_with;
@@ -305,13 +310,7 @@ class ResultsSlip
       return 0;
     }
 
-    public function betHits(Bet $bet)
-    {
-        return $bet->hits($this->matches[$bet->getMatchId()]);
-    }
-
-
-    public function getHitsCount($better_slips) 
+    private function getHitsCount($better_slips) 
     {
       $hits_count = array();
       foreach ($better_slips as $better_slip) {
