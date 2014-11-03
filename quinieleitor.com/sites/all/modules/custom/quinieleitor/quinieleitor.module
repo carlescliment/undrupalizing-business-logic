@@ -288,6 +288,32 @@ class PrizeCalculator
     }
 }
 
+
+class BetterSlips
+{
+    private $slips;
+
+    public function __construct(array $slips = array())
+    {
+        $this->slips = $slips;
+    }
+
+    public function getHitsCount(ResultsSlip $results_slip)
+    {
+      $hits_count = array();
+      foreach ($this->slips as $better_slip) {
+        $player_hits = $better_slip->getHits($results_slip);
+        if (!isset($hits_count[$player_hits])) {
+          $hits_count[$player_hits] = 0;
+        }
+        $hits_count[$player_hits]++;
+      }
+
+      return $hits_count;
+    }
+}
+
+
 class ResultsSlip
 {
     private $matches = array();
@@ -309,7 +335,8 @@ class ResultsSlip
 
     public function calculatePrizes($better_slips, PrizeCalculator $calculator)
     {
-        $hits_count = $this->getHitsCount($better_slips);
+        $collection = new BetterSlips($better_slips);
+        $hits_count = $collection->getHitsCount($this);
         foreach ($better_slips as $better_slip) {
             $player_hits = $better_slip->getHits($this);
             $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
@@ -320,20 +347,6 @@ class ResultsSlip
     public function getMatches()
     {
         return $this->matches;
-    }
-
-    private function getHitsCount($better_slips) 
-    {
-      $hits_count = array();
-      foreach ($better_slips as $better_slip) {
-        $player_hits = $better_slip->getHits($this);
-        if (!isset($hits_count[$player_hits])) {
-          $hits_count[$player_hits] = 0;
-        }
-        $hits_count[$player_hits]++;
-      }
-
-      return $hits_count;
     }
 }
 
