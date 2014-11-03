@@ -49,17 +49,17 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     // Assert
     $slips = quinieleitor_load_betting_slips();
     $this->assertEqual(1, count($slips));
-    $matches = array_values($slips[0]->matches);
-    $this->assertEqual($matches[0]->name, 'SEV-VAL', sprintf('%s equals expected', $matches[0]->name));
-    $this->assertEqual($matches[1]->name, 'ALM-ESP', sprintf('%s equals expected', $matches[1]->name));
-    $this->assertEqual($matches[2]->name, 'CEL-GET', sprintf('%s equals expected', $matches[2]->name));
-    $this->assertEqual($matches[3]->name, 'RMA-COR', sprintf('%s equals expected', $matches[3]->name));
-    $this->assertEqual($matches[4]->name, 'EIB-RSO', sprintf('%s equals expected', $matches[4]->name));
-    $this->assertEqual($matches[5]->name, 'RAY-ATM', sprintf('%s equals expected', $matches[5]->name));
-    $this->assertEqual($matches[6]->name, 'GRA-DEP', sprintf('%s equals expected', $matches[6]->name));
-    $this->assertEqual($matches[7]->name, 'FCB-ELC', sprintf('%s equals expected', $matches[7]->name));
-    $this->assertEqual($matches[8]->name, 'LEV-VIL', sprintf('%s equals expected', $matches[8]->name));
-    $this->assertEqual($matches[9]->name, 'MAL-ATH', sprintf('%s equals expected', $matches[9]->name));
+    $matches = array_values($slips[0]->getMatches());
+    $this->assertEqual($matches[0]->getName(), 'SEV-VAL', sprintf('%s equals expected', $matches[0]->getName()));
+    $this->assertEqual($matches[1]->getName(), 'ALM-ESP', sprintf('%s equals expected', $matches[1]->getName()));
+    $this->assertEqual($matches[2]->getName(), 'CEL-GET', sprintf('%s equals expected', $matches[2]->getName()));
+    $this->assertEqual($matches[3]->getName(), 'RMA-COR', sprintf('%s equals expected', $matches[3]->getName()));
+    $this->assertEqual($matches[4]->getName(), 'EIB-RSO', sprintf('%s equals expected', $matches[4]->getName()));
+    $this->assertEqual($matches[5]->getName(), 'RAY-ATM', sprintf('%s equals expected', $matches[5]->getName()));
+    $this->assertEqual($matches[6]->getName(), 'GRA-DEP', sprintf('%s equals expected', $matches[6]->getName()));
+    $this->assertEqual($matches[7]->getName(), 'FCB-ELC', sprintf('%s equals expected', $matches[7]->getName()));
+    $this->assertEqual($matches[8]->getName(), 'LEV-VIL', sprintf('%s equals expected', $matches[8]->getName()));
+    $this->assertEqual($matches[9]->getName(), 'MAL-ATH', sprintf('%s equals expected', $matches[9]->getName()));
   }
 
 

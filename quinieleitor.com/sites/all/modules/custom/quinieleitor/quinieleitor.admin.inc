@@ -62,17 +62,17 @@ function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
  * Renders the form to resolve a betting slip
  */
 function quinieleitor_resolve_betting_slip_form(&$form_state, $current_slip) {
-  $form_state['betting_slip_id'] = $current_slip->id;
+  $form_state['betting_slip_id'] = $current_slip->getId();
   $form = array();
   $form['matches'] = array(
       '#tree' => true,
   );
-  foreach ($current_slip->matches as $match) {
-    $form["matches"][$match->id] = array(
+  foreach ($current_slip->getMatches() as $match) {
+    $form["matches"][$match->getId()] = array(
       '#type' => 'textfield',
-      '#title' => $match->name,
+      '#title' => $match->getName(),
       '#required' => TRUE,
-      '#default_value' => isset($form_state['values']['matches'][$match->id]) ? $form_state['values']['matches'][$match->id] : '',
+      '#default_value' => isset($form_state['values']['matches'][$match->getId()]) ? $form_state['values']['matches'][$match->getId()] : '',
     );
   }
   $form['submit'] = array(

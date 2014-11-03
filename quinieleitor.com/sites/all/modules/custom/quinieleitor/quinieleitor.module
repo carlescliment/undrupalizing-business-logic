@@ -51,12 +51,15 @@ function quinieleitor_perm() {
 
 function quinieleitor_load_current_slip() {
   $results = db_query('SELECT * FROM {betting_slips} WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
-  $slip = db_fetch_object($results);
-  if ($slip) {
-    $slip->matches = quinieleitor_load_slip_matches($slip->id);
+  $slip_data = db_fetch_object($results);
+  if ($slip_data) {
+    $slip = new ResultsSlip($slip_data->id);
+    quinieleitor_load_slip_matches($slip);
+
+    return $slip;
   }
 
-  return $slip;
+  return null;
 }
 
 
@@ -68,10 +71,7 @@ function quinieleitor_load_slip($slip_id) {
     if ($slip_data->closed) {
       $slip->close();
     }
-    $matches = quinieleitor_load_slip_matches($slip->getId());
-    foreach ($matches as $match_data) {
-      $slip->add(new Match($match_data->id, $match_data->name, $match_data->result));
-    }
+    quinieleitor_load_slip_matches($slip);
 
     return $slip;
   }
@@ -94,23 +94,21 @@ function quinieleitor_load_better_slip($uid, $slip_id) {
 function quinieleitor_load_betting_slips() {
   $slips = array();
   $results = db_query('SELECT * FROM {betting_slips} ORDER BY date ASC');
-  while ($slip = db_fetch_object($results)) {
-    $slip->matches = quinieleitor_load_slip_matches($slip->id);
+  while ($slip_data = db_fetch_object($results)) {
+    $slip = new ResultsSlip($slip_data->id);
+    quinieleitor_load_slip_matches($slip);
     $slips[] = $slip;
   }
   return $slips;
 }
 
 
-function quinieleitor_load_slip_matches($slip_id) {
-  $matches = array();
-  $results = db_query('SELECT * FROM {matches} WHERE slip_id=%d ORDER BY id ASC', $slip_id);
+function quinieleitor_load_slip_matches(ResultsSlip $slip) {
+  $results = db_query('SELECT * FROM {matches} WHERE slip_id=%d ORDER BY id ASC', $slip->getId());
   while ($match = db_fetch_object($results)) {
+    $slip->add(new Match($match->id, $match->name, $match->result));
     $matches[$match->id] = $match;
-
   }
-
-  return $matches;
 }
 
 function quinieleitor_save_betting_slip($betting_slip) {
@@ -267,6 +265,11 @@ class Match
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function getResult()

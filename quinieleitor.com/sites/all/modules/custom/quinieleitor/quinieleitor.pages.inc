@@ -27,20 +27,20 @@ function quinieleitor_hall_of_fame_page() {
 
 
 function quinieleitor_bet_form(&$form_state, $betting_slip) {
-  $form_state['betting_slip_id'] = $betting_slip->id;
+  $form_state['betting_slip_id'] = $betting_slip->getId();
   $form = array(
-    '#prefix' => "<div id='add-slip-{$betting_slip->id}'>",
+    '#prefix' => "<div id='add-slip-{$betting_slip->getId()}'>",
     '#suffix' => "</div>",
   );
   $form['matches'] = array(
     '#tree' => true,
   );
-  foreach ($betting_slip->matches as $match) {
-    $form['matches'][$match->id] = array(
+  foreach ($betting_slip->getMatches() as $match) {
+    $form['matches'][$match->getId()] = array(
       '#type' => 'textfield',
-      '#title' => $match->name,
+      '#title' => $match->getName(),
       '#required' => TRUE,
-      '#default_value' => isset($form_state['matches'][$match->id]) ? $form_state['matches'][$match->id] : '',
+      '#default_value' => isset($form_state['matches'][$match->getId()]) ? $form_state['matches'][$match->getId()] : '',
     );
   }
   $form['submit'] = array(
