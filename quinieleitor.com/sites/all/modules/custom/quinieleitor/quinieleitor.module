@@ -172,7 +172,7 @@ function quinieleitor_update_all_better_points($slip_id, $better_slips) {
   $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
   $better_slip_collection->calculatePrizes($results_slip, $calculator);
   foreach ($better_slip_collection->all() as $better_slip) {
-    quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->prize);
+    quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->getPrize());
   }
 }
 
@@ -360,9 +360,9 @@ class ResultsSlip
 
 class BetterSlip
 {
-    public $prize = 0;
     private $userId;
     private $bets = array();
+    private $prize = 0;
 
     public function __construct($user_id)
     {
@@ -404,5 +404,10 @@ class BetterSlip
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    public function getPrize()
+    {
+        return $this->prize;
     }
 }

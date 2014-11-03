@@ -52,7 +52,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
     // Assert
     $slip_items = $slips->all();
-    $this->assertEqual(0, $slip_items[0]->prize);
+    $this->assertEqual(0, $slip_items[0]->getPrize());
   }
 
 
@@ -68,7 +68,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
     // Assert
     $slip_items = $slips->all();
-    $this->assertEqual($expected_prize, $slip_items[0]->prize, sprintf('%d matches %d', $slip_items[0]->prize, $expected_prize));
+    $this->assertEqual($expected_prize, $slip_items[0]->getPrize(), sprintf('%d matches %d', $slip_items[0]->getPrize(), $expected_prize));
   }
 
 
@@ -86,8 +86,8 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
     // Assert
     $slip_items = $slips->all();
-    $this->assertEqual($expected_first_prize, $slip_items[0]->prize, sprintf('%d matches %d', $slip_items[0]->prize, $expected_first_prize));
-    $this->assertEqual($expected_second_prize, $slip_items[1]->prize, sprintf('%d matches %d', $slip_items[1]->prize, $expected_second_prize));
+    $this->assertEqual($expected_first_prize, $slip_items[0]->getPrize(), sprintf('%d matches %d', $slip_items[0]->getPrize(), $expected_first_prize));
+    $this->assertEqual($expected_second_prize, $slip_items[1]->getPrize(), sprintf('%d matches %d', $slip_items[1]->getPrize(), $expected_second_prize));
   }
 
 
@@ -105,8 +105,8 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
     // Assert
     $slip_items = $slips->all();
-    $this->assertEqual($expected_first_prize, $slip_items[0]->prize, sprintf('%d matches %d', $slip_items[0]->prize, $expected_first_prize));
-    $this->assertEqual($expected_second_prize, $slip_items[1]->prize, sprintf('%d matches %d', $slip_items[1]->prize, $expected_second_prize));
+    $this->assertEqual($expected_first_prize, $slip_items[0]->getPrize(), sprintf('%d matches %d', $slip_items[0]->getPrize(), $expected_first_prize));
+    $this->assertEqual($expected_second_prize, $slip_items[1]->getPrize(), sprintf('%d matches %d', $slip_items[1]->getPrize(), $expected_second_prize));
   }
 
 
@@ -124,8 +124,8 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
     // Assert
     $slip_items = $slips->all();
-    $this->assertEqual($expected_first_prize, $slip_items[0]->prize, sprintf('%d matches %d', $slip_items[0]->prize, $expected_first_prize));
-    $this->assertEqual($expected_second_prize, $slip_items[1]->prize, sprintf('%d matches %d', $slip_items[1]->prize, $expected_second_prize));
+    $this->assertEqual($expected_first_prize, $slip_items[0]->getPrize(), sprintf('%d matches %d', $slip_items[0]->getPrize(), $expected_first_prize));
+    $this->assertEqual($expected_second_prize, $slip_items[1]->getPrize(), sprintf('%d matches %d', $slip_items[1]->getPrize(), $expected_second_prize));
   }
 
 
@@ -150,7 +150,7 @@ class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
     // Assert
     foreach ($slips->all() as $slip) {
-      $this->assertEqual($expected_shared_prize, $slip->prize, sprintf('%d matches %d', $slip->prize, $expected_shared_prize));
+      $this->assertEqual($expected_shared_prize, $slip->getPrize(), sprintf('%d matches %d', $slip->getPrize(), $expected_shared_prize));
     }
   }
 
