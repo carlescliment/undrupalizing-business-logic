@@ -1,5 +1,12 @@
 <?php
 
+use carlescliment\Quinieleitor\BetterSlip,
+    carlescliment\Quinieleitor\ResultsSlip,
+    carlescliment\Quinieleitor\BetterSlips,
+    carlescliment\Quinieleitor\PrizeCalculator,
+    carlescliment\Quinieleitor\Match,
+    carlescliment\Quinieleitor\Bet;
+
 class QuinieleitorPrizesTest extends DrupalUnitTestCase {
 
   private $calculator;
