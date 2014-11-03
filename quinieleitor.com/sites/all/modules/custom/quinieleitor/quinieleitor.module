@@ -312,9 +312,7 @@ class BetterSlips
     {
         $hits_count = $this->getHitsCount($results_slip);
         foreach ($this->slips as $better_slip) {
-            $player_hits = $better_slip->getHits($results_slip);
-            $share_with_betters = isset($hits_count[$player_hits]) ? $hits_count[$player_hits] : 1;
-            $better_slip->prize = $calculator->calculatePrize($player_hits, count($this->slips), $share_with_betters);
+            $better_slip->calculatePrizeWith($results_slip, $calculator, count($this->slips), $hits_count);
         }
     }
 
@@ -384,6 +382,13 @@ class BetterSlip
     public function add(Bet $bet)
     {
         $this->bets[$bet->getMatchId()] = $bet;
+    }
+
+    public function calculatePrizeWith(ResultsSlip $results_slip, PrizeCalculator $calculator, $num_slips, array $hits_count)
+    {
+        $hits = $this->getHits($results_slip);
+        $share_with_betters = isset($hits_count[$hits]) ? $hits_count[$hits] : 1;
+        $this->prize = $calculator->calculatePrize($hits, $num_slips, $share_with_betters);
     }
 
     public function getHits(ResultsSlip $results_slip)
