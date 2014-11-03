@@ -11,6 +11,9 @@
  * See COPYRIGHT.txt and LICENSE.txt.
  */
 
+// Composer autoload
+require_once __DIR__.'/../vendor/autoload.php';
+
 require_once './includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 

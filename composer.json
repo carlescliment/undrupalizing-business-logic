@@ -1,0 +1,11 @@
+{
+    "name": "carlescliment/undrupalizing-business-logic",
+    "authors": [
+        {
+            "name": "Carles Climent",
+            "email": "carlescliment@hotmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {"psr-0": {"" : "src/"}}
+}

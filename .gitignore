@@ -2,3 +2,6 @@
 *.swp
 quinieleitor.com/sites/default/settings.php
 quinieleitor.com/sites/default/files/simpletest*
+
+/vendor/
+composer.phar
