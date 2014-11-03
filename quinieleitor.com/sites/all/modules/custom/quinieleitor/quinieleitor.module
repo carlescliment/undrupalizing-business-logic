@@ -165,13 +165,13 @@ function quinieleitor_load_all_bets_for_slip($slip_id) {
 function quinieleitor_update_all_better_points($slip_id, $better_slips) {
   $results_slip = ResultsSlip::createFromLegacy(quinieleitor_load_slip($slip_id));
 
-  $better_slip_instances = array();
+  $better_slip_collection = new BetterSlips();
   foreach ($better_slips as $better_slip) {
-    $better_slip_instances[$better_slip->uid] = BetterSlip::createFromLegacy($better_slip);
+    $better_slip_collection->add(BetterSlip::createFromLegacy($better_slip));
   }
   $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
-  $results_slip->calculatePrizes($better_slip_instances, $calculator);
-  foreach ($better_slip_instances as $better_slip) {
+  $better_slip_collection->calculatePrizes($results_slip, $calculator);
+  foreach ($better_slip_collection->all() as $better_slip) {
     quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->prize);
   }
 }
@@ -298,6 +298,16 @@ class BetterSlips
         $this->slips = $slips;
     }
 
+    public function add(BetterSlip $slip)
+    {
+        $this->slips[] = $slip;
+    }
+
+    public function all()
+    {
+        return $this->slips;
+    }
+
     public function calculatePrizes(ResultsSlip $results_slip, PrizeCalculator $calculator)
     {
         $hits_count = $this->getHitsCount($results_slip);
@@ -341,12 +351,6 @@ class ResultsSlip
     public function add(Match $match)
     {
         $this->matches[$match->getId()] = $match;
-    }
-
-    public function calculatePrizes($better_slips, PrizeCalculator $calculator)
-    {
-        $collection = new BetterSlips($better_slips);
-        $collection->calculatePrizes($this, $calculator);
     }
 
     public function getMatches()
