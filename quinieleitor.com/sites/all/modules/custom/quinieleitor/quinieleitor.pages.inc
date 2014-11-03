@@ -58,7 +58,7 @@ function quinieleitor_bet_form_validate($form, &$form_state) {
         form_set_error(null, 'The slip does not exist');
         return;
     }
-    if ($slip->closed) {
+    if ($slip->isClosed()) {
         form_set_error(null, 'The slip is closed');
     }
 

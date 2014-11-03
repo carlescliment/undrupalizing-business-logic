@@ -62,12 +62,21 @@ function quinieleitor_load_current_slip() {
 
 function quinieleitor_load_slip($slip_id) {
   $results = db_query('SELECT * FROM {betting_slips} WHERE id=%d', $slip_id);
-  $slip = db_fetch_object($results);
-  if ($slip) {
-    $slip->matches = quinieleitor_load_slip_matches($slip->id);
+  $slip_data = db_fetch_object($results);
+  if ($slip_data) {
+    $slip = new ResultsSlip($slip_data->id);
+    if ($slip_data->closed) {
+      $slip->close();
+    }
+    $matches = quinieleitor_load_slip_matches($slip->getId());
+    foreach ($matches as $match_data) {
+      $slip->add(new Match($match_data->id, $match_data->name, $match_data->result));
+    }
+
+    return $slip;
   }
 
-  return $slip;
+  return null;
 }
 
 
@@ -163,7 +172,7 @@ function quinieleitor_load_all_bets_for_slip($slip_id) {
 
 
 function quinieleitor_update_all_better_points($slip_id, $better_slips) {
-  $results_slip = ResultsSlip::createFromLegacy(quinieleitor_load_slip($slip_id));
+  $results_slip = quinieleitor_load_slip($slip_id);
 
   $better_slip_collection = new BetterSlips();
   foreach ($better_slips as $better_slip) {
@@ -334,16 +343,18 @@ class BetterSlips
 
 class ResultsSlip
 {
+    private $id;
     private $matches = array();
+    private $closed = false;
 
-    public static function createFromLegacy($legacy_slip)
+    public function __construct($id = null)
     {
-        $slip = new static();
-        foreach ($legacy_slip->matches as $match) {
-            $slip->add(new Match($match->id, $match->name, $match->result));
-        }
+        $this->id = $id;
+    }
 
-        return $slip;
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function add(Match $match)
@@ -354,6 +365,16 @@ class ResultsSlip
     public function getMatches()
     {
         return $this->matches;
+    }
+
+    public function close()
+    {
+        $this->closed = true;
+    }
+
+    public function isClosed()
+    {
+        return $this->closed;
     }
 }
 
