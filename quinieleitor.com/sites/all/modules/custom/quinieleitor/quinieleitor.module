@@ -82,12 +82,9 @@ function quinieleitor_load_slip($slip_id) {
 
 function quinieleitor_load_better_slip($uid, $slip_id) {
   $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d AND m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
-  $better_slip = new stdClass();
-  $better_slip->uid = $uid;
-  $better_slip->slip_id = $slip_id;
-  $better_slip->matches = array();
+  $better_slip = new BetterSlip($uid, $slip_id);
   while ($bet = db_fetch_object($results)) {
-    $better_slip->matches[$bet->match_id] = $bet;
+    $better_slip->add(new Bet($bet->id, $bet->match_id, $bet->prediction));
   }
 
   return $better_slip;
@@ -161,10 +158,10 @@ function quinieleitor_betting_slip_resolved($slip_id) {
 
 
 function quinieleitor_load_all_bets_for_slip($slip_id) {
-  $better_slips = array();
+  $better_slips = new BetterSlips();
   $results = db_query('SELECT DISTINCT(b.user_id) FROM {bets} b JOIN {matches} m WHERE b.match_id = m.id AND m.slip_id = %d', $slip_id);
   while ($row = db_fetch_object($results)) {
-    $better_slips[$row->user_id] = quinieleitor_load_better_slip($row->user_id, $slip_id);
+    $better_slips->add(quinieleitor_load_better_slip($row->user_id, $slip_id));
   }
 
   return $better_slips;
@@ -173,14 +170,9 @@ function quinieleitor_load_all_bets_for_slip($slip_id) {
 
 function quinieleitor_update_all_better_points($slip_id, $better_slips) {
   $results_slip = quinieleitor_load_slip($slip_id);
-
-  $better_slip_collection = new BetterSlips();
-  foreach ($better_slips as $better_slip) {
-    $better_slip_collection->add(BetterSlip::createFromLegacy($better_slip));
-  }
   $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
-  $better_slip_collection->calculatePrizes($results_slip, $calculator);
-  foreach ($better_slip_collection->all() as $better_slip) {
+  $better_slips->calculatePrizes($results_slip, $calculator);
+  foreach ($better_slips->all() as $better_slip) {
     quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->getPrize());
   }
 }
@@ -250,6 +242,12 @@ class Bet
     {
         return $match->getResult() == $this->prediction;
     }
+
+    public function getPrediction()
+    {
+        return $this->prediction;
+    }
+
 
 }
 
@@ -382,22 +380,14 @@ class ResultsSlip
 class BetterSlip
 {
     private $userId;
+    private $slipId;
     private $bets = array();
     private $prize = 0;
 
-    public function __construct($user_id)
+    public function __construct($user_id, $slip_id)
     {
         $this->userId = $user_id;
-    }
-
-    public static function createFromLegacy($legacy_slip)
-    {
-        $slip = new static($legacy_slip->uid);
-        foreach ($legacy_slip->matches as $bet) {
-            $slip->add(new Bet($bet->id, $bet->match_id, $bet->prediction));
-        }
-
-        return $slip;
+        $this->slipId = $slip_id;
     }
 
     public function add(Bet $bet)
@@ -431,4 +421,10 @@ class BetterSlip
     {
         return $this->prize;
     }
+
+    public function getBets()
+    {
+        return $this->bets;
+    }
+
 }

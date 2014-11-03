@@ -49,9 +49,9 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
 
     // Assert
     $player_slip = quinieleitor_load_better_slip($this->better->uid, $current_slip->id);
-    $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->matches));
-    foreach ($player_slip->matches as $match) {
-      $this->assertEqual(1, $match->prediction);
+    $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->getBets()));
+    foreach ($player_slip->getBets() as $bet) {
+      $this->assertEqual(1, $bet->getPrediction());
     }
   }
 
