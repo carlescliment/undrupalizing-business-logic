@@ -4,6 +4,9 @@ namespace carlescliment\Quinieleitor;
 
 class ResultsSlip
 {
+
+    const MATCHES_PER_SLIP = 10;
+
     private $id;
     private $matches = array();
     private $closed = false;
