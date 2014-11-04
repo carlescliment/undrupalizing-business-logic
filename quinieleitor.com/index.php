@@ -13,6 +13,7 @@
 
 // Composer autoload
 require_once __DIR__.'/../vendor/autoload.php';
+$container = require_once __DIR__.'/../config/drupal.php';
 
 require_once './includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);

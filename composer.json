@@ -6,7 +6,9 @@
             "email": "carlescliment@hotmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "pimple/pimple": "*"
+    },
     "require-dev": {
         "phpunit/phpunit": "*"
     },
