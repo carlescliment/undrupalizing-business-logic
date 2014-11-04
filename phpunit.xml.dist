@@ -1,0 +1,17 @@
+<phpunit
+  backupGlobals = "false"
+  backupStaticAttributes = "false"
+  colors = "true"
+  convertErrorsToExceptions = "true"
+  convertNoticesToExceptions = "true"
+  convertWarningsToExceptions = "true"
+  processIsolation = "false"
+  stopOnFailure = "true"
+  syntaxCheck = "false"
+>
+  <testsuites>
+    <testsuite name="Quinieleitor Test Suite">
+      <directory>test/carlescliment/Quinieleitor</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
