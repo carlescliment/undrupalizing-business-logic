@@ -199,13 +199,4 @@ class BetterSlipsTest extends \PHPUnit_Framework_TestCase
 
         return $slip;
     }
-
-    /**
-     * @test
-     */
-    public function itWorks()
-    {
-        $slip = new BetterSlips();
-    }
-
 }
