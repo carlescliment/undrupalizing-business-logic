@@ -60,6 +60,16 @@ class ResultsSlipRepository
         return $this->connection->lastInsertId();
     }
 
+    public function saveMatch(Match $match, ResultsSlip $slip)
+    {
+        $this->connection->execute('INSERT INTO `matches` (slip_id, name, result) VALUES (:slip_id, :name, :result)', array(
+            ':slip_id' => $slip->getId(),
+            ':name' => $match->getName(),
+            ':result' => $match->getResult(),
+        ));
+
+        return $this->connection->lastInsertId();
+    }
 
     private function buildSlipFromData(array $slip_data)
     {

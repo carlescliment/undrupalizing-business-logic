@@ -2,6 +2,8 @@
 
 namespace carlescliment\Quinieleitor;
 
+use carlescliment\Quinieleitor\Repository\ResultsSlipRepository;
+
 class Match
 {
     private $id;
@@ -30,4 +32,10 @@ class Match
         return $this->result;
     }
 
+    public function save(ResultsSlipRepository $repository, ResultsSlip $slip)
+    {
+        $this->id = $repository->saveMatch($this, $slip);
+
+        return $this;
+    }
 }

@@ -1,5 +1,8 @@
 <?php
 
+use carlescliment\Quinieleitor\Match,
+    carlescliment\Quinieleitor\ResultsSlip;
+
 function quinieleitor_resolve_betting_slip_page() {
   $current_slip = quinieleitor_load_current_slip();
   if (empty($current_slip)) {
@@ -44,16 +47,12 @@ function quinieleitor_add_betting_slip_form(&$form_state) {
 
 
 function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
-  $betting_slip = new stdClass;
-  $betting_slip->date = $form_state['values']['date'];
-  $betting_slip->matches = array();
+  $results_slip = new ResultsSlip(null, new DateTime($form_state['values']['date']));
   foreach ($form_state['values']['matches'] as $match_name) {
-    $match = new stdClass;
-    $match->name = $match_name;
-    $betting_slip->matches[] = $match;
+    $results_slip->add(new Match(null, $match_name, null));
   }
 
-  quinieleitor_save_betting_slip($betting_slip);
+  quinieleitor_save_betting_slip($results_slip);
   drupal_set_message('The slip has been created');
 }
 

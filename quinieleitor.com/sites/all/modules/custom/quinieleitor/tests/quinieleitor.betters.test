@@ -39,8 +39,8 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     // Arrange
     $current_slip = $this->helper->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
     $bet = array();
-    foreach ($current_slip->matches as $match) {
-      $bet["matches[{$match->id}]"] = '1';
+    foreach ($current_slip->getMatches() as $match) {
+      $bet["matches[{$match->getId()}]"] = '1';
     }
     $this->drupalLogin($this->better);
 
@@ -48,8 +48,8 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     $this->drupalPost('bet', $bet, 'Bet');
 
     // Assert
-    $player_slip = quinieleitor_load_better_slip($this->better->uid, $current_slip->id);
-    $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->getBets()));
+    $player_slip = quinieleitor_load_better_slip($this->better->uid, $current_slip->getId());
+    $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->getBets()), sprintf("Slip bets(%d) equal expected (%d)", count($player_slip->getBets()), MATCHES_PER_SLIP));
     foreach ($player_slip->getBets() as $bet) {
       $this->assertEqual(1, $bet->getPrediction());
     }

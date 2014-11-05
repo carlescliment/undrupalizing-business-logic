@@ -32,7 +32,7 @@ class ResultsSlip
 
     public function add(Match $match)
     {
-        $this->matches[$match->getId()] = $match;
+        $this->matches[] = $match;
     }
 
     public function getMatches()
@@ -53,6 +53,9 @@ class ResultsSlip
     public function save(ResultsSlipRepository $repository)
     {
         $this->id = $repository->save($this);
+        foreach ($this->matches as $match) {
+            $match->save($repository, $this);
+        }
 
         return $this;
     }

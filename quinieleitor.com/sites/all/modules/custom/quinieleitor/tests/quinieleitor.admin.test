@@ -67,8 +67,8 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     // Arrange
     $current_slip = $this->helper->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
     $results = array();
-    foreach ($current_slip->matches as $match) {
-      $results["matches[{$match->id}]"] = '1';
+    foreach ($current_slip->getMatches() as $match) {
+      $results["matches[{$match->getId()}]"] = '1';
     }
     $this->drupalLogin($this->admin);
 
@@ -76,7 +76,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     $this->drupalPost('admin/quinieleitor/resolve', $results, 'Resolve');
 
     // Assert
-    $saved_slip = quinieleitor_load_slip($current_slip->id);
+    $saved_slip = quinieleitor_load_slip($current_slip->getId());
     $this->assertTrue($saved_slip->isClosed());
     $this->assertEqual(MATCHES_PER_SLIP, count($saved_slip->getMatches()));
     foreach ($saved_slip->getMatches() as $match) {
@@ -89,9 +89,9 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     $current_slip = $this->helper->createBettingSlipForDate(date('Y-m-d', strtotime('+1 day')));
     $this->helper->betterBetsForSlip($this->betters[0], $current_slip, array_fill(0, MATCHES_PER_SLIP, '2')); 
     $this->helper->betterBetsForSlip($this->betters[1], $current_slip, array_fill(0, MATCHES_PER_SLIP, '2')); 
-    $results = array_fill(1, MATCHES_PER_SLIP, '2');
+    $results = array_fill(0, MATCHES_PER_SLIP, '2');
 
-    quinieleitor_resolve_betting_slip($current_slip->id, $results);
+    quinieleitor_resolve_betting_slip($current_slip->getId(), $results);
 
     $hall_of_fame = quinieleitor_load_hall_of_fame();
     $this->assertEqual(2, count($hall_of_fame));

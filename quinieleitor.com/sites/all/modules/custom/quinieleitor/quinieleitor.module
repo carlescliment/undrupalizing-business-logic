@@ -90,14 +90,8 @@ function quinieleitor_load_better_slip($uid, $slip_id) {
 }
 
 
-function quinieleitor_save_betting_slip($betting_slip) {
-  $slip = new ResultsSlip(null, new DateTime($betting_slip->date));
-  $slip->save(quinieleitor_get_results_slip_repository());
-  $betting_slip->id = $slip->getId();
-  foreach ($betting_slip->matches as $match) {
-    $match->slip_id = $slip->getId();
-    drupal_write_record('matches', $match);
-  }
+function quinieleitor_save_betting_slip(ResultsSlip $results_slip) {
+  $results_slip->save(quinieleitor_get_results_slip_repository());
 }
 
 
