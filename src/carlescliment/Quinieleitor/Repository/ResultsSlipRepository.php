@@ -60,6 +60,17 @@ class ResultsSlipRepository
         return $this->connection->lastInsertId();
     }
 
+    public function update(ResultsSlip $slip)
+    {
+        $this->connection->execute('UPDATE `betting_slips` set date = :date, closed = :closed WHERE id = :id', array(
+            ':date' => $slip->getDate()->format('Y-m-d'),
+            ':closed' => (int)$slip->isClosed(),
+            ':id' => $slip->getId(),
+        ));
+
+        return $slip->getId();
+    }
+
     public function saveMatch(Match $match, ResultsSlip $slip)
     {
         $this->connection->execute('INSERT INTO `matches` (slip_id, name, result) VALUES (:slip_id, :name, :result)', array(
@@ -69,6 +80,17 @@ class ResultsSlipRepository
         ));
 
         return $this->connection->lastInsertId();
+    }
+
+    public function updateMatch(Match $match)
+    {
+        $this->connection->execute('UPDATE `matches` SET name = :name, result = :result WHERE id = :id', array(
+            ':name' => $match->getName(),
+            ':result' => $match->getResult(),
+            ':id' => $match->getId(),
+        ));
+
+        return $match->getId();
     }
 
     private function buildSlipFromData(array $slip_data)

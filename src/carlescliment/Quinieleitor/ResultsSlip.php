@@ -52,13 +52,11 @@ class ResultsSlip
 
     public function save(ResultsSlipRepository $repository)
     {
-        $this->id = $repository->save($this);
+        $this->id = is_null($this->id) ? $repository->save($this) : $repository->update($this);
         foreach ($this->matches as $match) {
             $match->save($repository, $this);
         }
 
         return $this;
     }
-
-
 }

@@ -34,7 +34,7 @@ class Match
 
     public function save(ResultsSlipRepository $repository, ResultsSlip $slip)
     {
-        $this->id = $repository->saveMatch($this, $slip);
+        $this->id = is_null($this->id) ? $repository->saveMatch($this, $slip) : $repository->updateMatch($this);
 
         return $this;
     }
