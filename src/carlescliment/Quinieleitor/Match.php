@@ -32,6 +32,14 @@ class Match
         return $this->result;
     }
 
+    public function resolve($result)
+    {
+        $this->result = $result;
+
+        return $this;
+    }
+
+
     public function save(ResultsSlipRepository $repository, ResultsSlip $slip)
     {
         $this->id = is_null($this->id) ? $repository->saveMatch($this, $slip) : $repository->updateMatch($this);

@@ -33,6 +33,8 @@ class ResultsSlip
     public function add(Match $match)
     {
         $this->matches[] = $match;
+
+        return $this;
     }
 
     public function getMatches()
@@ -43,12 +45,28 @@ class ResultsSlip
     public function close()
     {
         $this->closed = true;
+
+        return $this;
     }
 
     public function isClosed()
     {
         return $this->closed;
     }
+
+    public function resolve($match_id, $result)
+    {
+        foreach ($this->getMatches() as $match) {
+            if ($match->getId() == $match_id) {
+                $match->resolve($result);
+
+                return $this;
+            }
+        }
+
+        return $this;
+    }
+
 
     public function save(ResultsSlipRepository $repository)
     {

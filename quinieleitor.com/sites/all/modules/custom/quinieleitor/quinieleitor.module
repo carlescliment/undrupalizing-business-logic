@@ -86,10 +86,10 @@ function quinieleitor_save_betting_slip(ResultsSlip $results_slip) {
 
 
 function quinieleitor_resolve_betting_slip($slip_id, $matches) {
-  foreach ($matches as $match_id => $result) {
-    db_query('UPDATE {matches} set result="%s" WHERE id=%d', $result, $match_id);
-  }
   $slip = quinieleitor_load_slip($slip_id);
+  foreach ($matches as $match_id => $result) {
+    $slip->resolve($match_id, $result);
+  }
   $slip->close();
   $slip->save(quinieleitor_get_results_slip_repository());
 
