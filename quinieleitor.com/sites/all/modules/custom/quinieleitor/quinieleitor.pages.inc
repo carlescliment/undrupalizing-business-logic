@@ -71,7 +71,7 @@ function quinieleitor_bet_form_validate($form, &$form_state) {
 
 function quinieleitor_bet_form_submit($form, &$form_state) {
   global $user;
-  $slip = new BetterSlip($user->uid, null);
+  $slip = new BetterSlip($user->uid);
   foreach ($form_state['values']['matches'] as $match_id => $prediction) {
     $slip->add(new Bet(null, $match_id, $prediction));
   }

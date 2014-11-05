@@ -7,14 +7,12 @@ use carlescliment\Quinieleitor\Repository\BetterSlipRepository;
 class BetterSlip
 {
     private $userId;
-    private $slipId;
     private $bets = array();
     private $prize = 0;
 
-    public function __construct($user_id, $slip_id)
+    public function __construct($user_id)
     {
         $this->userId = $user_id;
-        $this->slipId = $slip_id;
     }
 
     public function add(Bet $bet)
