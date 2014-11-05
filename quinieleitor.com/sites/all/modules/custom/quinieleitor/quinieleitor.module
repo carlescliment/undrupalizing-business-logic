@@ -105,13 +105,6 @@ function quinieleitor_load_better_slip($uid, $slip_id) {
 }
 
 
-function quinieleitor_save_bet($bet) {
-  foreach ($bet->matches as $match_bet) {
-    drupal_write_record('bets', $match_bet);
-  }
-}
-
-
 function quinieleitor_save_better_slip(BetterSlip $slip) {
   global $container;
   $repository = new BetterSlipRepository($container['database.connection']);
