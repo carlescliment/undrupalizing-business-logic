@@ -58,18 +58,19 @@ function quinieleitor_perm() {
 
 
 function quinieleitor_load_current_slip() {
-  global $container;
-  $repository = new ResultsSlipRepository($container['database.connection']);
-
-  return $repository->loadCurrent();
+  return quinieleitor_get_results_slip_repository()->loadCurrent();
 }
 
 
 function quinieleitor_load_slip($slip_id) {
-  global $container;
-  $repository = new ResultsSlipRepository($container['database.connection']);
+  return quinieleitor_get_results_slip_repository()->load($slip_id);
+}
 
-  return $repository->load($slip_id);
+
+function quinieleitor_get_results_slip_repository() {
+  global $container;
+
+  return new ResultsSlipRepository($container['database.connection']);
 }
 
 
