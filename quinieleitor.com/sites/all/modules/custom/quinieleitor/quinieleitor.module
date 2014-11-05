@@ -8,7 +8,7 @@ use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\PrizeCalculator,
     carlescliment\Quinieleitor\Match,
     carlescliment\Quinieleitor\Bet;
-use carlescliment\Components\DataBase\Connection;
+use carlescliment\Quinieleitor\Repository\ResultsSlipRepository;
 
 /**
  * Implements hook_menu()
@@ -56,37 +56,6 @@ function quinieleitor_perm() {
   return array('add betting slips', 'resolve betting slips', 'bet');
 }
 
-class ResultsSlipRepository
-{
-  private $connection;
-
-  public function __construct(Connection $connection)
-  {
-    $this->connection = $connection;
-  }
-
-
-  public function loadCurrent()
-  {
-    $this->connection->execute('SELECT * FROM `betting_slips` WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
-    if ($slip_data = $this->connection->fetch()) {
-      $slip = new ResultsSlip($slip_data['id']);
-      $this->loadSlipMatches($slip);
-      return $slip;
-    }
-
-    return null;
-  }
-
-  private function loadSlipMatches(ResultsSlip $slip)
-  {
-    $this->connection->execute('SELECT * FROM `matches` WHERE slip_id=:slip_id ORDER BY id ASC', array(
-     ':slip_id' => $slip->getId()));
-    while ($match = $this->connection->fetch()) {
-      $slip->add(new Match($match['id'], $match['name'], $match['result']));
-    }
-  }
-}
 
 function quinieleitor_load_current_slip() {
   global $container;
