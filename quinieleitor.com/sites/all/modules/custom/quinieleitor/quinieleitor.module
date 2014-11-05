@@ -73,13 +73,6 @@ function quinieleitor_load_betting_slips() {
 }
 
 
-function quinieleitor_get_results_slip_repository() {
-  global $container;
-
-  return new ResultsSlipRepository($container['database.connection']);
-}
-
-
 function quinieleitor_save_betting_slip(ResultsSlip $results_slip) {
   $results_slip->save(quinieleitor_get_results_slip_repository());
 }
@@ -97,20 +90,29 @@ function quinieleitor_resolve_betting_slip($slip_id, $matches) {
 }
 
 
-function quinieleitor_load_better_slip($uid, $slip_id) {
+function quinieleitor_get_results_slip_repository() {
   global $container;
-  $repository = new BetterSlipRepository($container['database.connection']);
 
-  return $repository->load($uid, $slip_id);
+  return new ResultsSlipRepository($container['database.connection']);
+}
+
+
+function quinieleitor_load_better_slip($uid, $slip_id) {
+  return quinieleitor_get_better_slip_repository()->load($uid, $slip_id);
 }
 
 
 function quinieleitor_save_better_slip(BetterSlip $slip) {
-  global $container;
-  $repository = new BetterSlipRepository($container['database.connection']);
-
-  $slip->save($repository);
+  $slip->save(quinieleitor_get_better_slip_repository());
 }
+
+
+function quinieleitor_get_better_slip_repository() {
+  global $container;
+
+  return new BetterSlipRepository($container['database.connection']);
+}
+
 
 /**
  * Specification of betting_slip_resolved.
