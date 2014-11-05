@@ -47,6 +47,19 @@ class ResultsSlipRepository
         return null;
     }
 
+    public function loadAll()
+    {
+        $slips = array();
+        $this->connection->execute('SELECT * FROM {betting_slips} ORDER BY date ASC');
+        while ($slip_data = $this->connection->fetch()) {
+            $slip = new ResultsSlip($slip_data['id']);
+            $this->loadSlipMatches($slip);
+            $slips[] = $slip;
+        }
+
+        return $slips;
+    }
+
     private function loadSlipMatches(ResultsSlip $slip)
     {
         $this->connection->execute('SELECT * FROM `matches` WHERE slip_id=:slip_id ORDER BY id ASC', array(

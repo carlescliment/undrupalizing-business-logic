@@ -86,14 +86,7 @@ function quinieleitor_load_better_slip($uid, $slip_id) {
 
 
 function quinieleitor_load_betting_slips() {
-  $slips = array();
-  $results = db_query('SELECT * FROM {betting_slips} ORDER BY date ASC');
-  while ($slip_data = db_fetch_object($results)) {
-    $slip = new ResultsSlip($slip_data->id);
-    quinieleitor_load_slip_matches($slip);
-    $slips[] = $slip;
-  }
-  return $slips;
+  return quinieleitor_get_results_slip_repository()->loadAll();
 }
 
 
