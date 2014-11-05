@@ -1,7 +1,10 @@
 <?php
 
 use carlescliment\Quinieleitor\ResultsSlip,
-    carlescliment\Quinieleitor\Match;
+    carlescliment\Quinieleitor\Match,
+    carlescliment\Quinieleitor\BetterSlip,
+    carlescliment\Quinieleitor\Bet;
+
 
 class QuinieleitorTestHelper
 {
@@ -18,18 +21,13 @@ class QuinieleitorTestHelper
     return $slip;
   }
 
-
   public function betterBetsForSlip($better, ResultsSlip $slip, $predictions)
   {
-    $better_slip = new stdClass();
-    $better_slip->matches = array();
+    $better_slip = new BetterSlip($better->uid);
     foreach ($slip->getMatches() as $i => $match) {
-        $bet = new stdClass();
-        $bet->match_id = $match->getId();
-        $bet->user_id = $better->uid;
-        $bet->prediction = $predictions[$i];
-        $better_slip->matches[] = $bet;
+        $better_slip->add(new Bet(null, $match->getId(), $predictions[$i]));
     }
-    quinieleitor_save_bet($better_slip);
+
+    quinieleitor_save_better_slip($better_slip);
   }
 }
