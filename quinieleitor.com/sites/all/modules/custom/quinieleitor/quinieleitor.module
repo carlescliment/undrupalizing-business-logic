@@ -8,7 +8,8 @@ use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\PrizeCalculator,
     carlescliment\Quinieleitor\Match,
     carlescliment\Quinieleitor\Bet;
-use carlescliment\Quinieleitor\Repository\ResultsSlipRepository;
+use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
+    carlescliment\Quinieleitor\Repository\BetterSlipRepository;
 
 /**
  * Implements hook_menu()
@@ -80,13 +81,10 @@ function quinieleitor_get_results_slip_repository() {
 
 
 function quinieleitor_load_better_slip($uid, $slip_id) {
-  $results = db_query('SELECT b.* FROM {bets} b JOIN {matches} m ON b.match_id=m.id WHERE b.user_id=%d AND m.slip_id=%d ORDER BY m.id ASC', $uid, $slip_id);
-  $better_slip = new BetterSlip($uid, $slip_id);
-  while ($bet = db_fetch_object($results)) {
-    $better_slip->add(new Bet($bet->id, $bet->match_id, $bet->prediction));
-  }
+  global $container;
+  $repository = new BetterSlipRepository($container['database.connection']);
 
-  return $better_slip;
+  return $repository->load($uid, $slip_id);
 }
 
 
