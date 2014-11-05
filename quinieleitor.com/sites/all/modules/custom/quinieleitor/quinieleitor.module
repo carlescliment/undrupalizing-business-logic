@@ -7,9 +7,11 @@ use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\BetterSlips,
     carlescliment\Quinieleitor\PrizeCalculator,
     carlescliment\Quinieleitor\Match,
-    carlescliment\Quinieleitor\Bet;
+    carlescliment\Quinieleitor\Bet,
+    carlescliment\Quinieleitor\Score;
 use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
-    carlescliment\Quinieleitor\Repository\BetterSlipRepository;
+    carlescliment\Quinieleitor\Repository\BetterSlipRepository,
+    carlescliment\Quinieleitor\Repository\ScoreRepository;
 
 /**
  * Implements hook_menu()
@@ -167,11 +169,11 @@ function quinieleitor_get_prize_table() {
 
 
 function quinieleitor_add_better_points($uid, $points) {
-  $current_points = quinieleitor_load_better_points($points);
-  $score = new stdClass();
-  $score->user_id = $uid;
-  $score->points = $points + $current_points;
-  drupal_write_record('better_points', $score);
+  global $container;
+  $current_points = quinieleitor_load_better_points($uid);
+  $score = new Score($uid, $current_points + $points);
+  $repository = new ScoreRepository($container['database.connection']);
+  $score->save($repository);
 }
 
 
