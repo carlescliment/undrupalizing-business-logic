@@ -191,7 +191,7 @@ class BetterSlipsTest extends \PHPUnit_Framework_TestCase
 
     private function createResultSlip($matches)
     {
-        $slip = new ResultsSlip();
+        $slip = new ResultsSlip(null, new \DateTime());
         foreach ($matches as $match_id => $result) {
             $match = new Match($match_id, "Match $match_id", $result);
             $slip->add($match);
