@@ -17,13 +17,30 @@ class ResultsSlipRepository
         $this->connection = $connection;
     }
 
-
     public function loadCurrent()
     {
         $this->connection->execute('SELECT * FROM `betting_slips` WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
         if ($slip_data = $this->connection->fetch()) {
             $slip = new ResultsSlip($slip_data['id']);
             $this->loadSlipMatches($slip);
+            return $slip;
+        }
+
+        return null;
+    }
+
+    public function load($slip_id)
+    {
+        $this->connection->execute('SELECT * FROM `betting_slips` WHERE id=:id', array(
+            ':id' => $slip_id));
+        $slip_data = $this->connection->fetch();
+        if ($slip_data) {
+            $slip = new ResultsSlip($slip_data['id']);
+            if ($slip_data['closed']) {
+                $slip->close();
+            }
+            $this->loadSlipMatches($slip);
+
             return $slip;
         }
 

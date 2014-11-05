@@ -66,19 +66,10 @@ function quinieleitor_load_current_slip() {
 
 
 function quinieleitor_load_slip($slip_id) {
-  $results = db_query('SELECT * FROM {betting_slips} WHERE id=%d', $slip_id);
-  $slip_data = db_fetch_object($results);
-  if ($slip_data) {
-    $slip = new ResultsSlip($slip_data->id);
-    if ($slip_data->closed) {
-      $slip->close();
-    }
-    quinieleitor_load_slip_matches($slip);
+  global $container;
+  $repository = new ResultsSlipRepository($container['database.connection']);
 
-    return $slip;
-  }
-
-  return null;
+  return $repository->load($slip_id);
 }
 
 
