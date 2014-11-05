@@ -2,6 +2,8 @@
 
 namespace carlescliment\Quinieleitor;
 
+use carlescliment\Quinieleitor\Repository\ResultsSlipRepository;
+
 class ResultsSlip
 {
 
@@ -47,4 +49,13 @@ class ResultsSlip
     {
         return $this->closed;
     }
+
+    public function save(ResultsSlipRepository $repository)
+    {
+        $this->id = $repository->save($this);
+
+        return $this;
+    }
+
+
 }

@@ -42,13 +42,24 @@ class ResultsSlipRepository
     public function loadAll()
     {
         $slips = array();
-        $this->connection->execute('SELECT * FROM {betting_slips} ORDER BY date ASC');
+        $this->connection->execute('SELECT * FROM `betting_slips` ORDER BY date ASC');
         while ($slip_data = $this->connection->fetch()) {
             $slips[] = $this->buildSlipFromData($slip_data);
         }
 
         return $slips;
     }
+
+    public function save(ResultsSlip $slip)
+    {
+        $this->connection->execute('INSERT INTO `betting_slips` (date, closed) VALUES (:date, :closed)', array(
+            ':date' => $slip->getDate()->format('Y-m-d'),
+            ':closed' => (int)$slip->isClosed(),
+        ));
+
+        return $this->connection->lastInsertId();
+    }
+
 
     private function buildSlipFromData(array $slip_data)
     {
