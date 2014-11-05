@@ -21,9 +21,7 @@ class ResultsSlipRepository
     {
         $this->connection->execute('SELECT * FROM `betting_slips` WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
         if ($slip_data = $this->connection->fetch()) {
-            $slip = new ResultsSlip($slip_data['id']);
-            $this->loadSlipMatches($slip);
-            return $slip;
+            return $this->buildSlipFromData($slip_data);
         }
 
         return null;
@@ -35,13 +33,7 @@ class ResultsSlipRepository
             ':id' => $slip_id));
         $slip_data = $this->connection->fetch();
         if ($slip_data) {
-            $slip = new ResultsSlip($slip_data['id']);
-            if ($slip_data['closed']) {
-                $slip->close();
-            }
-            $this->loadSlipMatches($slip);
-
-            return $slip;
+            return $this->buildSlipFromData($slip_data);
         }
 
         return null;
@@ -52,12 +44,21 @@ class ResultsSlipRepository
         $slips = array();
         $this->connection->execute('SELECT * FROM {betting_slips} ORDER BY date ASC');
         while ($slip_data = $this->connection->fetch()) {
-            $slip = new ResultsSlip($slip_data['id']);
-            $this->loadSlipMatches($slip);
-            $slips[] = $slip;
+            $slips[] = $this->buildSlipFromData($slip_data);
         }
 
         return $slips;
+    }
+
+    private function buildSlipFromData(array $slip_data)
+    {
+        $slip = new ResultsSlip($slip_data['id'], new \DateTime($slip_data['date']));
+        if ($slip_data['closed']) {
+            $slip->close();
+        }
+        $this->loadSlipMatches($slip);
+
+        return $slip;
     }
 
     private function loadSlipMatches(ResultsSlip $slip)
