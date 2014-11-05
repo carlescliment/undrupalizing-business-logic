@@ -57,12 +57,12 @@ function quinieleitor_perm() {
 
 
 function quinieleitor_load_current_slip() {
-  $results = db_query('SELECT * FROM {betting_slips} WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
-  $slip_data = db_fetch_object($results);
-  if ($slip_data) {
-    $slip = new ResultsSlip($slip_data->id);
+  global $container;
+  $connection = $container['database.connection'];
+  $connection->execute('SELECT * FROM `betting_slips` WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
+  if ($slip_data = $connection->fetch()) {
+    $slip = new ResultsSlip($slip_data['id']);
     quinieleitor_load_slip_matches($slip);
-
     return $slip;
   }
 
