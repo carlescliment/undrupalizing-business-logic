@@ -1,5 +1,8 @@
 <?php
 
+use carlescliment\Quinieleitor\BetterSlip,
+    carlescliment\Quinieleitor\Bet;
+
 function quinieleitor_bet_page() {
   $betting_slip = quinieleitor_load_current_slip();
   if ($betting_slip) {
@@ -68,16 +71,11 @@ function quinieleitor_bet_form_validate($form, &$form_state) {
 
 function quinieleitor_bet_form_submit($form, &$form_state) {
   global $user;
-  $bet = new stdClass;
-  $bet->matches = array();
+  $slip = new BetterSlip($user->uid, null);
   foreach ($form_state['values']['matches'] as $match_id => $prediction) {
-    $match = new stdClass;
-    $match->user_id = $user->uid;
-    $match->match_id = $match_id;
-    $match->prediction = $prediction;
-    $bet->matches[] = $match;
+    $slip->add(new Bet(null, $match_id, $prediction));
   }
 
-  quinieleitor_save_bet($bet);
+  quinieleitor_save_better_slip($slip);
   drupal_set_message('Your bet has been submitted. Good luck!');
 }

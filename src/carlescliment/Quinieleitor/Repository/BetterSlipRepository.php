@@ -29,4 +29,15 @@ class BetterSlipRepository
 
         return $better_slip;
     }
+
+    public function saveBet(Bet $bet, BetterSlip $slip)
+    {
+        $this->connection->execute('INSERT INTO `bets` (match_id, user_id, prediction) VALUES (:match_id, :user_id, :prediction)', array(
+            ':match_id' => $bet->getMatchId(),
+            ':user_id' => $slip->getUserId(),
+            ':prediction' => $bet->getPrediction(),
+        ));
+
+        return $this->connection->lastInsertId();
+    }
 }

@@ -112,6 +112,13 @@ function quinieleitor_save_bet($bet) {
 }
 
 
+function quinieleitor_save_better_slip(BetterSlip $slip) {
+  global $container;
+  $repository = new BetterSlipRepository($container['database.connection']);
+
+  $slip->save($repository);
+}
+
 /**
  * Specification of betting_slip_resolved.
  */

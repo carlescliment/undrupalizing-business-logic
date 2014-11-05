@@ -2,6 +2,8 @@
 
 namespace carlescliment\Quinieleitor;
 
+use carlescliment\Quinieleitor\Repository\BetterSlipRepository;
+
 class BetterSlip
 {
     private $userId;
@@ -50,5 +52,14 @@ class BetterSlip
     public function getBets()
     {
         return $this->bets;
+    }
+
+    public function save(BetterSlipRepository $repository)
+    {
+        foreach ($this->bets as $bet) {
+            $bet->save($repository, $this);
+        }
+
+        return $this;
     }
 }

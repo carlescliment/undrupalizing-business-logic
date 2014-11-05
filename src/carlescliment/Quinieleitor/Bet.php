@@ -2,6 +2,8 @@
 
 namespace carlescliment\Quinieleitor;
 
+use carlescliment\Quinieleitor\Repository\BetterSlipRepository;
+
 class Bet
 {
     private $id;
@@ -30,4 +32,13 @@ class Bet
     {
         return $this->prediction;
     }
+
+    public function save(BetterSlipRepository $repository, BetterSlip $slip)
+    {
+        $this->id = $repository->saveBet($this, $slip);
+
+        return $this;
+    }
+
+    
 }
