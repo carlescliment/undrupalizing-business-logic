@@ -10,7 +10,8 @@
         "pimple/pimple": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "phpspec/phpspec": "2.*"
     },
     "config": {
         "bin-dir" : "bin"
