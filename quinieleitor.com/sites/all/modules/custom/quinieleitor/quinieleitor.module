@@ -3,12 +3,7 @@
 define('MATCHES_PER_SLIP', 10);
 define('HALL_OF_FAME_MEMBERS', 50);
 
-use carlescliment\Quinieleitor\ResultsSlip;
-use carlescliment\Quinieleitor\Repository\BetterSlipRepository,
-    carlescliment\Quinieleitor\Repository\ScoreRepository;
 use carlescliment\Quinieleitor\Controller\ApplicationController;
-use carlescliment\Quinieleitor\Score\Updater,
-    carlescliment\Quinieleitor\Score\PrizeCalculator;
 
 /**
  * Implements hook_menu()
@@ -54,28 +49,6 @@ function quinieleitor_menu() {
  */
 function quinieleitor_perm() {
   return array('add betting slips', 'resolve betting slips', 'bet');
-}
-
-
-/**
- * Specification of betting_slip_resolved.
- */
-function hook_betting_slip_resolved(ResultsSlip $slip)
-{
-}
-
-
-/**
- * Implements hook_betting_slip_resolved.
- */
-function quinieleitor_betting_slip_resolved(ResultsSlip $slip) {
-  global $container;
-  $better_slip_repository = new BetterSlipRepository($container['database.connection']);
-  $better_slips = $better_slip_repository->loadAllByResultsSlip($slip);
-  $score_repository = new ScoreRepository($container['database.connection']);
-  $calculator = new PrizeCalculator($container['quinieleitor.prizes']);;
-  $updater = new Updater($score_repository, $calculator);
-  $updater->update($slip, $better_slips);
 }
 
 

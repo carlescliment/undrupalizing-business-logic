@@ -11,6 +11,9 @@ use carlescliment\Quinieleitor\Repository\ScoreRepository,
 use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\ResultsSlip
     ;
+use carlescliment\Quinieleitor\EventDispatcher\Event\QuinieleitorEvents,
+    carlescliment\Quinieleitor\EventDispatcher\Event\ResultsSlipEvent
+    ;
 
 class ApplicationController
 {
@@ -59,6 +62,8 @@ class ApplicationController
         }
         $slip->close();
         $slip->save($repository);
+
+        $this->container['event.dispatcher']->dispatch(QuinieleitorEvents::SLIP_RESOLVED, new ResultsSlipEvent($slip));
 
         return $this;
     }

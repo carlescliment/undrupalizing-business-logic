@@ -3,6 +3,7 @@
 namespace carlescliment\Components\EventDispatcher\Adapter\Symfony;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use carlescliment\Components\EventDispatcher\Dispatcher;
 
 class SymfonyEventDispatcher implements Dispatcher
 {
