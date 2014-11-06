@@ -38,7 +38,7 @@ class ScoreRepository
 
     public function loadHallOfFame($members)
     {
-        $this->connection->execute('SELECT * FROM `better_points` p JOIN `users` u ON p.user_id=u.uid ORDER BY points DESC LIMIT :members', array(
+        $this->connection->execute('SELECT * FROM `better_points` ORDER BY points DESC LIMIT :members', array(
         ':members' => $members));
         $hall_of_fame = array();
         while ($row = $this->connection->fetch()) {

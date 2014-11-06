@@ -8,6 +8,7 @@
   processIsolation = "false"
   stopOnFailure = "true"
   syntaxCheck = "false"
+  bootstrap = "test/bootstrap.php"
 >
   <testsuites>
     <testsuite name="Quinieleitor Test Suite">

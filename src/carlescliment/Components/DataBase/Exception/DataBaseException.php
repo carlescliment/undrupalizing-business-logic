@@ -1,5 +1,5 @@
 <?php
 
-namespace carlescliment\Components\Exception;
+namespace carlescliment\Components\DataBase\Exception;
 
 class DataBaseException extends \Exception {};

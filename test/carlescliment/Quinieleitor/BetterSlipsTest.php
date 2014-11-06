@@ -1,6 +1,6 @@
 <?php
 
-namespace test\carlescliment\Quinieleitor;
+namespace carlescliment\Quinieleitor;
 
 use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\ResultsSlip,
