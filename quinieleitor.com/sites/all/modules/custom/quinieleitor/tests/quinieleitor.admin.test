@@ -90,8 +90,9 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     $this->helper->betterBetsForSlip($this->betters[0], $current_slip, array_fill(0, MATCHES_PER_SLIP, '2')); 
     $this->helper->betterBetsForSlip($this->betters[1], $current_slip, array_fill(0, MATCHES_PER_SLIP, '2')); 
     $results = array_fill(0, MATCHES_PER_SLIP, '2');
+    quinieleitor_controller()->resolve($current_slip->getId(), $results);
 
-    quinieleitor_resolve_betting_slip($current_slip->getId(), $results);
+    module_invoke_all('betting_slip_resolved', $current_slip);
 
     $hall_of_fame = quinieleitor_controller()->getHallOfFame(HALL_OF_FAME_MEMBERS);
     $this->assertEqual(2, count($hall_of_fame), sprintf('Expected %d members in hall of fame, got %d', 2, count($hall_of_fame)));

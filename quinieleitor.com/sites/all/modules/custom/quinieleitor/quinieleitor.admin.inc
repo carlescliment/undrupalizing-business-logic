@@ -84,8 +84,10 @@ function quinieleitor_resolve_betting_slip_form(&$form_state, $current_slip) {
 
 
 function quinieleitor_resolve_betting_slip_form_submit($form, &$form_state) {
-  quinieleitor_resolve_betting_slip($form_state['betting_slip_id'], $form_state['values']['matches']);
+  quinieleitor_controller()->resolve($form_state['betting_slip_id'], $form_state['values']['matches']);
   drupal_set_message('The slip has been resolved');
+
+  module_invoke_all('betting_slip_resolved', quinieleitor_load_slip($form_state['betting_slip_id']));
 
   drupal_goto('/');
 }
