@@ -171,9 +171,8 @@ function quinieleitor_get_prize_table() {
 function quinieleitor_add_better_points($uid, $points) {
   global $container;
   $repository = new ScoreRepository($container['database.connection']);
-  $current_score = $repository->loadByUser($uid);
-  $score = new Score($uid, $current_score->getPoints() + $points);
-  $score->save($repository);
+  $score = new Score($uid, $points);
+  $score->sum($repository->loadByUser($uid))->save($repository);
 }
 
 

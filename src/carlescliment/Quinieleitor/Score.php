@@ -31,4 +31,9 @@ class Score
 
         return $this;
     }
+
+    public function sum(Score $to_sum)
+    {
+        return new Score($this->userId, $to_sum->getPoints() + $this->getPoints());
+    }
 }
