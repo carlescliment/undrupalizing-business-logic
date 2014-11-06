@@ -5,7 +5,11 @@ namespace carlescliment\Quinieleitor\Controller;
 use Pimple\Container;
 
 use carlescliment\Quinieleitor\Repository\ScoreRepository,
-    carlescliment\Quinieleitor\Repository\ResultsSlipRepository
+    carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
+    carlescliment\Quinieleitor\Repository\BetterSlipRepository
+    ;
+use carlescliment\Quinieleitor\BetterSlip,
+    carlescliment\Quinieleitor\ResultsSlip
     ;
 
 class ApplicationController
@@ -25,6 +29,20 @@ class ApplicationController
     public function loadSlip($slip_id)
     {
         return $this->getResultsSlipRepository()->load($slip_id);
+    }
+
+    public function saveSlip(ResultsSlip $slip)
+    {
+        $slip->save($this->getResultsSlipRepository());
+
+        return $this;
+    }
+
+    public function saveBet(BetterSlip $slip)
+    {
+        $slip->save($this->getBetterSlipRepository());
+
+        return $this;
     }
 
     public function getHallOfFame($members)
@@ -53,5 +71,10 @@ class ApplicationController
     private function getResultsSlipRepository()
     {
         return new ResultsSlipRepository($this->container['database.connection']);
+    }
+
+    private function getBetterSlipRepository()
+    {
+        return new BetterSlipRepository($this->container['database.connection']);
     }
 }

@@ -59,20 +59,10 @@ function quinieleitor_perm() {
 }
 
 
-function quinieleitor_save_betting_slip(ResultsSlip $results_slip) {
-  $results_slip->save(quinieleitor_get_results_slip_repository());
-}
-
-
 function quinieleitor_get_results_slip_repository() {
   global $container;
 
   return new ResultsSlipRepository($container['database.connection']);
-}
-
-
-function quinieleitor_save_better_slip(BetterSlip $slip) {
-  $slip->save(quinieleitor_get_better_slip_repository());
 }
 
 

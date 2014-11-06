@@ -52,7 +52,7 @@ function quinieleitor_add_betting_slip_form_submit($form, &$form_state) {
     $results_slip->add(new Match(null, $match_name, null));
   }
 
-  quinieleitor_save_betting_slip($results_slip);
+  quinieleitor_controller()->saveSlip($results_slip);
   drupal_set_message('The slip has been created');
 }
 

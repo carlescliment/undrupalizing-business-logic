@@ -19,7 +19,7 @@ class QuinieleitorTestHelper
       $visitor = ($i*2)+1;
       $slip->add(new Match(null, "TM$local-TM$visitor", null));
     }
-    quinieleitor_save_betting_slip($slip);
+    quinieleitor_controller()->saveSlip($slip);
 
     return $slip;
   }
@@ -31,7 +31,7 @@ class QuinieleitorTestHelper
         $better_slip->add(new Bet(null, $match->getId(), $predictions[$i]));
     }
 
-    quinieleitor_save_better_slip($better_slip);
+    quinieleitor_controller()->saveBet($better_slip);
   }
 
   public function loadResultsSlips()
