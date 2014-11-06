@@ -47,7 +47,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     $this->drupalPost('admin/quinieleitor/add', $betting_slip, 'Add');
 
     // Assert
-    $slips = quinieleitor_load_betting_slips();
+    $slips = $this->helper->loadResultsSlips();
     $this->assertEqual(1, count($slips));
     $matches = array_values($slips[0]->getMatches());
     $this->assertEqual($matches[0]->getName(), 'SEV-VAL', sprintf('%s equals expected', $matches[0]->getName()));

@@ -5,6 +5,9 @@ use carlescliment\Quinieleitor\ResultsSlip,
     carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\Bet;
 
+use carlescliment\Quinieleitor\Repository\BetterSlipRepository,
+    carlescliment\Quinieleitor\Repository\ResultsSlipRepository;
+
 
 class QuinieleitorTestHelper
 {
@@ -30,4 +33,22 @@ class QuinieleitorTestHelper
 
     quinieleitor_save_better_slip($better_slip);
   }
+
+  public function loadResultsSlips()
+  {
+    global $container;
+    $repository = new ResultsSlipRepository($container['database.connection']);
+
+    return $repository->loadAll();
+  }
+
+  public function loadBetterSlips()
+  {
+    global $container;
+    $repository = new BetterSlipRepository($container['database.connection']);
+
+    return $repository->load($uid, $slip_id);
+  }
+
+
 }
