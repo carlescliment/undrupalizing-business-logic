@@ -10,6 +10,7 @@ use carlescliment\Quinieleitor\BetterSlip,
 use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
     carlescliment\Quinieleitor\Repository\BetterSlipRepository,
     carlescliment\Quinieleitor\Repository\ScoreRepository;
+use carlescliment\Quinieleitor\Controller\ApplicationController;
 
 /**
  * Implements hook_menu()
@@ -168,6 +169,8 @@ function quinieleitor_add_better_points($uid, $points) {
 }
 
 
-function quinieleitor_load_hall_of_fame() {
-  return quinieleitor_get_score_repository()->loadHallOfFame(HALL_OF_FAME_MEMBERS);
+function quinieleitor_controller() {
+  global $container;
+  
+  return new ApplicationController($container);
 }

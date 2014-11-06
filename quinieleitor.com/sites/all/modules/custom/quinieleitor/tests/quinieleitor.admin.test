@@ -93,7 +93,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
 
     quinieleitor_resolve_betting_slip($current_slip->getId(), $results);
 
-    $hall_of_fame = quinieleitor_load_hall_of_fame();
+    $hall_of_fame = quinieleitor_controller()->getHallOfFame(HALL_OF_FAME_MEMBERS);
     $this->assertEqual(2, count($hall_of_fame), sprintf('Expected %d members in hall of fame, got %d', 2, count($hall_of_fame)));
   }
 

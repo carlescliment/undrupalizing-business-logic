@@ -14,7 +14,7 @@ function quinieleitor_bet_page() {
 
 
 function quinieleitor_hall_of_fame_page() {
-    $hall_of_fame = quinieleitor_load_hall_of_fame();
+    $hall_of_fame = quinieleitor_controller()->getHallOfFame(HALL_OF_FAME_MEMBERS);
     if (empty($hall_of_fame)) {
         return 'Nobody has earned points yet.';
     }
