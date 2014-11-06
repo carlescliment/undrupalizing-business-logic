@@ -57,7 +57,7 @@ function quinieleitor_bet_form(&$form_state, $betting_slip) {
 
 
 function quinieleitor_bet_form_validate($form, &$form_state) {
-    $slip = quinieleitor_load_slip($form_state['betting_slip_id']);
+    $slip = quinieleitor_controller()->loadSlip($form_state['betting_slip_id']);
     if (!$slip) {
         form_set_error(null, 'The slip does not exist');
         return;

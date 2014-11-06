@@ -76,7 +76,7 @@ class QuinieleitorAdminTest extends DrupalWebTestCase {
     $this->drupalPost('admin/quinieleitor/resolve', $results, 'Resolve');
 
     // Assert
-    $saved_slip = quinieleitor_load_slip($current_slip->getId());
+    $saved_slip = quinieleitor_controller()->loadSlip($current_slip->getId());
     $this->assertTrue($saved_slip->isClosed());
     $this->assertEqual(MATCHES_PER_SLIP, count($saved_slip->getMatches()));
     foreach ($saved_slip->getMatches() as $match) {

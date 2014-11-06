@@ -59,11 +59,6 @@ function quinieleitor_perm() {
 }
 
 
-function quinieleitor_load_slip($slip_id) {
-  return quinieleitor_get_results_slip_repository()->load($slip_id);
-}
-
-
 function quinieleitor_load_betting_slips() {
   return quinieleitor_get_results_slip_repository()->loadAll();
 }

@@ -22,6 +22,11 @@ class ApplicationController
         return $this->getResultsSlipRepository()->loadCurrent();
     }
 
+    public function loadSlip($slip_id)
+    {
+        return $this->getResultsSlipRepository()->load($slip_id);
+    }
+
     public function getHallOfFame($members)
     {
         return $this->getScoreRepository()->loadHallOfFame($members);
