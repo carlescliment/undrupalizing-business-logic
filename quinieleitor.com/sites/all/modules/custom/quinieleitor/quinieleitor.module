@@ -89,7 +89,7 @@ function quinieleitor_resolve_betting_slip($slip_id, $matches) {
   $slip->close();
   $slip->save(quinieleitor_get_results_slip_repository());
 
-  module_invoke_all('betting_slip_resolved', $slip_id);
+  module_invoke_all('betting_slip_resolved', $slip);
 }
 
 
@@ -120,7 +120,7 @@ function quinieleitor_get_better_slip_repository() {
 /**
  * Specification of betting_slip_resolved.
  */
-function hook_betting_slip_resolved($slip_id)
+function hook_betting_slip_resolved(ResultsSlip $slip)
 {
 }
 
@@ -128,26 +128,25 @@ function hook_betting_slip_resolved($slip_id)
 /**
  * Implements hook_betting_slip_resolved.
  */
-function quinieleitor_betting_slip_resolved($slip_id) {
-  $better_slips = quinieleitor_load_all_bets_for_slip($slip_id);
+function quinieleitor_betting_slip_resolved(ResultsSlip $slip) {
+  $better_slips = quinieleitor_load_all_bets_for_slip($slip);
 
-  quinieleitor_update_all_better_points($slip_id, $better_slips);
+  quinieleitor_update_all_better_points($slip, $better_slips);
 }
 
 
-function quinieleitor_load_all_bets_for_slip($slip_id) {
+function quinieleitor_load_all_bets_for_slip(ResultsSlip $slip) {
   $better_slips = new BetterSlips();
-  $results = db_query('SELECT DISTINCT(b.user_id) FROM {bets} b JOIN {matches} m WHERE b.match_id = m.id AND m.slip_id = %d', $slip_id);
+  $results = db_query('SELECT DISTINCT(b.user_id) FROM {bets} b JOIN {matches} m WHERE b.match_id = m.id AND m.slip_id = %d', $slip->getId());
   while ($row = db_fetch_object($results)) {
-    $better_slips->add(quinieleitor_load_better_slip($row->user_id, $slip_id));
+    $better_slips->add(quinieleitor_load_better_slip($row->user_id, $slip->getId()));
   }
 
   return $better_slips;
 }
 
 
-function quinieleitor_update_all_better_points($slip_id, $better_slips) {
-  $results_slip = quinieleitor_load_slip($slip_id);
+function quinieleitor_update_all_better_points(ResultsSlip $results_slip, $better_slips) {
   $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
   $better_slips->calculatePrizes($results_slip, $calculator);
   foreach ($better_slips->all() as $better_slip) {
