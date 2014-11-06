@@ -9,7 +9,8 @@ use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
     carlescliment\Quinieleitor\Repository\BetterSlipRepository,
     carlescliment\Quinieleitor\Repository\ScoreRepository;
 use carlescliment\Quinieleitor\Controller\ApplicationController;
-use carlescliment\Quinieleitor\Score\Updater;
+use carlescliment\Quinieleitor\Score\Updater,
+    carlescliment\Quinieleitor\Score\PrizeCalculator;
 
 /**
  * Implements hook_menu()
@@ -114,22 +115,11 @@ function hook_betting_slip_resolved(ResultsSlip $slip)
  * Implements hook_betting_slip_resolved.
  */
 function quinieleitor_betting_slip_resolved(ResultsSlip $slip) {
+  global $container;
   $better_slips = quinieleitor_get_better_slip_repository()->loadAllByResultsSlip($slip);
-  $updater = new Updater(quinieleitor_get_score_repository(), quinieleitor_get_prize_table());
+  $calculator = new PrizeCalculator($container['quinieleitor.prizes']);;
+  $updater = new Updater(quinieleitor_get_score_repository(), $calculator);
   $updater->update($slip, $better_slips);
-}
-
-
-function quinieleitor_get_prize_table() {
-  return array(
-    'slip_value' => 100,
-    'prizes' => array(
-      10 => 0.4,
-       9 => 0.2,
-       8 => 0.12,
-       7 => 0.08,
-     ),
-  );
 }
 
 

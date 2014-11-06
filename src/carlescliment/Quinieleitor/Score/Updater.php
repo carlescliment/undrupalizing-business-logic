@@ -4,24 +4,24 @@ namespace carlescliment\Quinieleitor\Score;
 
 use carlescliment\Quinieleitor\Repository\ScoreRepository;
 use carlescliment\Quinieleitor\ResultsSlip,
-    carlescliment\Quinieleitor\BetterSlips;
+    carlescliment\Quinieleitor\BetterSlips
+    ;
 
 class Updater
 {
     private $scoreRepository;
-    private $prizeTable;
+    private $calculator;
 
-    public function __construct(ScoreRepository $repository, array $prize_table)
+    public function __construct(ScoreRepository $repository, PrizeCalculator $calculator)
     {
         $this->scoreRepository = $repository;
-        $this->prizeTable = $prize_table;
+        $this->calculator = $calculator;
     }
 
 
     public function update(ResultsSlip $results_slip, BetterSlips $better_slips)
     {
-        $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
-        $better_slips->calculatePrizes($results_slip, $calculator);
+        $better_slips->calculatePrizes($results_slip, $this->calculator);
         foreach ($better_slips->all() as $better_slip) {
             $this->addBetterPoints($better_slip->getUserId(), $better_slip->getPrize());
         }
