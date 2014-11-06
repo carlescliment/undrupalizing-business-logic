@@ -1,6 +1,7 @@
 <?php
 
 define('MATCHES_PER_SLIP', 10);
+define('HALL_OF_FAME_MEMBERS', 50);
 
 use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\ResultsSlip,
@@ -177,11 +178,8 @@ function quinieleitor_add_better_points($uid, $points) {
 
 
 function quinieleitor_load_hall_of_fame() {
-  $results = db_query('SELECT * FROM {better_points} p JOIN {users} u ON p.user_id=u.uid ORDER BY points DESC');
-  $hall_of_fame = array();
-  while ($row = db_fetch_object($results)) {
-    $hall_of_fame[] = $row;
-  }
+  global $container;
+  $repository = new ScoreRepository($container['database.connection']);
 
-  return $hall_of_fame;
+  return $repository->loadHallOfFame(HALL_OF_FAME_MEMBERS);
 }

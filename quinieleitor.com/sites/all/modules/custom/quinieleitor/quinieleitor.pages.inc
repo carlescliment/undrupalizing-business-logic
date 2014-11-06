@@ -21,8 +21,9 @@ function quinieleitor_hall_of_fame_page() {
 
     $headers = array('Player', 'Points');
     $rows = array();
-    foreach ($hall_of_fame as $better) {
-        $rows[] = array($better->name, $better->points); 
+    foreach ($hall_of_fame as $score) {
+        $user = user_load($score->getUserId());
+        $rows[] = array($user->name, $score->getPoints()); 
     }
 
     return theme_table($headers, $rows);
