@@ -77,6 +77,6 @@ function quinieleitor_bet_form_submit($form, &$form_state) {
     $slip->add(new Bet(null, $match_id, $prediction));
   }
 
-  quinieleitor_controller->saveBet($slip);
+  quinieleitor_controller()->saveBet($slip);
   drupal_set_message('Your bet has been submitted. Good luck!');
 }

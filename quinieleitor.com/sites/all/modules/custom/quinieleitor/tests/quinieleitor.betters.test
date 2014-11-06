@@ -50,7 +50,7 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     $this->drupalPost('bet', $bet, 'Bet');
 
     // Assert
-    $slips = $this->helper->loadBetterSlips();
+    $player_slip = $this->helper->loadBetterSlip($this->better->uid, $current_slip->getId());
     $this->assertEqual(MATCHES_PER_SLIP, count($player_slip->getBets()), sprintf("Slip bets(%d) equal expected (%d)", count($player_slip->getBets()), MATCHES_PER_SLIP));
     foreach ($player_slip->getBets() as $bet) {
       $this->assertEqual(1, $bet->getPrediction());
@@ -77,7 +77,7 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     for ($i=0; $i<5; $i++) {
         $competitor = $this->drupalCreateUser(array('access content'));
         $score = new Score($competitor->uid, rand(100, 200));
-        $score->save(quinieleitor_get_score_repository());
+        $score->save($this->helper->getScoreRepository());
         $competitors[] = array('name' => $competitor->name, 'points' => $score->getPoints());
     }
 

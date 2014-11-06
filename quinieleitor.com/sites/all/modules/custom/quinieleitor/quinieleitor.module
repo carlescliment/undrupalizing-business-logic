@@ -3,10 +3,8 @@
 define('MATCHES_PER_SLIP', 10);
 define('HALL_OF_FAME_MEMBERS', 50);
 
-use carlescliment\Quinieleitor\BetterSlip,
-    carlescliment\Quinieleitor\ResultsSlip;
-use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
-    carlescliment\Quinieleitor\Repository\BetterSlipRepository,
+use carlescliment\Quinieleitor\ResultsSlip;
+use carlescliment\Quinieleitor\Repository\BetterSlipRepository,
     carlescliment\Quinieleitor\Repository\ScoreRepository;
 use carlescliment\Quinieleitor\Controller\ApplicationController;
 use carlescliment\Quinieleitor\Score\Updater,
@@ -59,20 +57,6 @@ function quinieleitor_perm() {
 }
 
 
-function quinieleitor_get_results_slip_repository() {
-  global $container;
-
-  return new ResultsSlipRepository($container['database.connection']);
-}
-
-
-function quinieleitor_get_better_slip_repository() {
-  global $container;
-
-  return new BetterSlipRepository($container['database.connection']);
-}
-
-
 /**
  * Specification of betting_slip_resolved.
  */
@@ -86,17 +70,12 @@ function hook_betting_slip_resolved(ResultsSlip $slip)
  */
 function quinieleitor_betting_slip_resolved(ResultsSlip $slip) {
   global $container;
-  $better_slips = quinieleitor_get_better_slip_repository()->loadAllByResultsSlip($slip);
+  $better_slip_repository = new BetterSlipRepository($container['database.connection']);
+  $better_slips = $better_slip_repository->loadAllByResultsSlip($slip);
+  $score_repository = new ScoreRepository($container['database.connection']);
   $calculator = new PrizeCalculator($container['quinieleitor.prizes']);;
-  $updater = new Updater(quinieleitor_get_score_repository(), $calculator);
+  $updater = new Updater($score_repository, $calculator);
   $updater->update($slip, $better_slips);
-}
-
-
-function quinieleitor_get_score_repository() {
-  global $container;
-
-  return new ScoreRepository($container['database.connection']);
 }
 
 

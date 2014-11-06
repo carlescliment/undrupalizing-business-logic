@@ -5,7 +5,7 @@ namespace test\carlescliment\Quinieleitor;
 use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\ResultsSlip,
     carlescliment\Quinieleitor\BetterSlips,
-    carlescliment\Quinieleitor\PrizeCalculator,
+    carlescliment\Quinieleitor\Score\PrizeCalculator,
     carlescliment\Quinieleitor\Match,
     carlescliment\Quinieleitor\Bet;
 
