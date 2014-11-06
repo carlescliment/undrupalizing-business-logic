@@ -5,10 +5,7 @@ define('HALL_OF_FAME_MEMBERS', 50);
 
 use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\ResultsSlip,
-    carlescliment\Quinieleitor\BetterSlips,
     carlescliment\Quinieleitor\PrizeCalculator,
-    carlescliment\Quinieleitor\Match,
-    carlescliment\Quinieleitor\Bet,
     carlescliment\Quinieleitor\Score;
 use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
     carlescliment\Quinieleitor\Repository\BetterSlipRepository,
@@ -129,20 +126,9 @@ function hook_betting_slip_resolved(ResultsSlip $slip)
  * Implements hook_betting_slip_resolved.
  */
 function quinieleitor_betting_slip_resolved(ResultsSlip $slip) {
-  $better_slips = quinieleitor_load_all_bets_for_slip($slip);
+  $better_slips = quinieleitor_get_better_slip_repository()->loadAllByResultsSlip($slip);
 
   quinieleitor_update_all_better_points($slip, $better_slips);
-}
-
-
-function quinieleitor_load_all_bets_for_slip(ResultsSlip $slip) {
-  $better_slips = new BetterSlips();
-  $results = db_query('SELECT DISTINCT(b.user_id) FROM {bets} b JOIN {matches} m WHERE b.match_id = m.id AND m.slip_id = %d', $slip->getId());
-  while ($row = db_fetch_object($results)) {
-    $better_slips->add(quinieleitor_load_better_slip($row->user_id, $slip->getId()));
-  }
-
-  return $better_slips;
 }
 
 
@@ -152,6 +138,13 @@ function quinieleitor_update_all_better_points(ResultsSlip $results_slip, $bette
   foreach ($better_slips->all() as $better_slip) {
     quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->getPrize());
   }
+}
+
+
+function quinieleitor_get_score_repository() {
+  global $container;
+
+  return new ScoreRepository($container['database.connection']);
 }
 
 
@@ -169,16 +162,12 @@ function quinieleitor_get_prize_table() {
 
 
 function quinieleitor_add_better_points($uid, $points) {
-  global $container;
-  $repository = new ScoreRepository($container['database.connection']);
+  $repository = quinieleitor_get_score_repository();
   $score = new Score($uid, $points);
   $score->sum($repository->loadByUser($uid))->save($repository);
 }
 
 
 function quinieleitor_load_hall_of_fame() {
-  global $container;
-  $repository = new ScoreRepository($container['database.connection']);
-
-  return $repository->loadHallOfFame(HALL_OF_FAME_MEMBERS);
+  return quinieleitor_get_score_repository()->loadHallOfFame(HALL_OF_FAME_MEMBERS);
 }
