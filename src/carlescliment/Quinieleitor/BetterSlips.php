@@ -2,6 +2,8 @@
 
 namespace carlescliment\Quinieleitor;
 
+use carlescliment\Quinieleitor\Score\PrizeCalculator;
+
 class BetterSlips
 {
     private $slips;

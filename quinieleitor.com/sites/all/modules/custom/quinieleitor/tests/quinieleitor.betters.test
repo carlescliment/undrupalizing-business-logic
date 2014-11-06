@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/quinieleitor_test_helper.inc';
 
+use carlescliment\Quinieleitor\Score\Score;
+
 class QuinieleitorBetterTest extends DrupalWebTestCase {
 
   private $better;
@@ -74,9 +76,9 @@ class QuinieleitorBetterTest extends DrupalWebTestCase {
     $competitors = array();
     for ($i=0; $i<5; $i++) {
         $competitor = $this->drupalCreateUser(array('access content'));
-        $points = rand(100, 200);
-        quinieleitor_add_better_points($competitor->uid, $points);
-        $competitors[] = array('name' => $competitor->name, 'points' => $points);
+        $score = new Score($competitor->uid, rand(100, 200));
+        $score->save(quinieleitor_get_score_repository());
+        $competitors[] = array('name' => $competitor->name, 'points' => $score->getPoints());
     }
 
     // Act

@@ -4,13 +4,12 @@ define('MATCHES_PER_SLIP', 10);
 define('HALL_OF_FAME_MEMBERS', 50);
 
 use carlescliment\Quinieleitor\BetterSlip,
-    carlescliment\Quinieleitor\ResultsSlip,
-    carlescliment\Quinieleitor\PrizeCalculator,
-    carlescliment\Quinieleitor\Score;
+    carlescliment\Quinieleitor\ResultsSlip;
 use carlescliment\Quinieleitor\Repository\ResultsSlipRepository,
     carlescliment\Quinieleitor\Repository\BetterSlipRepository,
     carlescliment\Quinieleitor\Repository\ScoreRepository;
 use carlescliment\Quinieleitor\Controller\ApplicationController;
+use carlescliment\Quinieleitor\Score\Updater;
 
 /**
  * Implements hook_menu()
@@ -116,24 +115,8 @@ function hook_betting_slip_resolved(ResultsSlip $slip)
  */
 function quinieleitor_betting_slip_resolved(ResultsSlip $slip) {
   $better_slips = quinieleitor_get_better_slip_repository()->loadAllByResultsSlip($slip);
-
-  quinieleitor_update_all_better_points($slip, $better_slips);
-}
-
-
-function quinieleitor_update_all_better_points(ResultsSlip $results_slip, $better_slips) {
-  $calculator = new PrizeCalculator(quinieleitor_get_prize_table());
-  $better_slips->calculatePrizes($results_slip, $calculator);
-  foreach ($better_slips->all() as $better_slip) {
-    quinieleitor_add_better_points($better_slip->getUserId(), $better_slip->getPrize());
-  }
-}
-
-
-function quinieleitor_get_score_repository() {
-  global $container;
-
-  return new ScoreRepository($container['database.connection']);
+  $updater = new Updater(quinieleitor_get_score_repository(), quinieleitor_get_prize_table());
+  $updater->update($slip, $better_slips);
 }
 
 
@@ -150,10 +133,10 @@ function quinieleitor_get_prize_table() {
 }
 
 
-function quinieleitor_add_better_points($uid, $points) {
-  $repository = quinieleitor_get_score_repository();
-  $score = new Score($uid, $points);
-  $score->sum($repository->loadByUser($uid))->save($repository);
+function quinieleitor_get_score_repository() {
+  global $container;
+
+  return new ScoreRepository($container['database.connection']);
 }
 
 

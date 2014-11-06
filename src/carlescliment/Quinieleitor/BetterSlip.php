@@ -3,6 +3,7 @@
 namespace carlescliment\Quinieleitor;
 
 use carlescliment\Quinieleitor\Repository\BetterSlipRepository;
+use carlescliment\Quinieleitor\Score\PrizeCalculator;
 
 class BetterSlip
 {

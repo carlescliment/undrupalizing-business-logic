@@ -1,6 +1,6 @@
 <?php
 
-namespace carlescliment\Quinieleitor;
+namespace carlescliment\Quinieleitor\Score;
 
 class PrizeCalculator
 {

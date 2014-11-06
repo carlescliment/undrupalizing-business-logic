@@ -2,7 +2,7 @@
 
 namespace carlescliment\Quinieleitor\Repository;
 
-use carlescliment\Quinieleitor\Score;
+use carlescliment\Quinieleitor\Score\Score;
 use carlescliment\Components\DataBase\Connection;
 
 class ScoreRepository
