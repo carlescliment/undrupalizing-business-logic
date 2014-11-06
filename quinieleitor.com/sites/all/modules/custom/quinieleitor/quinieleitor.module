@@ -170,18 +170,10 @@ function quinieleitor_get_prize_table() {
 
 function quinieleitor_add_better_points($uid, $points) {
   global $container;
-  $current_points = quinieleitor_load_better_points($uid);
-  $score = new Score($uid, $current_points + $points);
   $repository = new ScoreRepository($container['database.connection']);
+  $current_score = $repository->loadByUser($uid);
+  $score = new Score($uid, $current_score->getPoints() + $points);
   $score->save($repository);
-}
-
-
-function quinieleitor_load_better_points($uid) {
-  $results = db_query('SELECT points FROM {better_points} WHERE user_id=%d', $uid);
-  $row = db_fetch_object($results);
-
-  return $row ? $row->points : 0;
 }
 
 

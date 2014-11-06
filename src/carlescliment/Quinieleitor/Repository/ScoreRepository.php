@@ -22,4 +22,17 @@ class ScoreRepository
 
         return $this;
     }
+
+    public function loadByUser($user_id)
+    {
+        $this->connection->execute('SELECT * FROM `better_points` WHERE user_id=:user_id', array(
+            ':user_id' => $user_id,
+        ));
+
+        if ($current_score = $this->connection->fetch()) {
+            return new Score($user_id, $current_score['points']);
+        }
+
+        return new Score($user_id, 0);
+    }
 }
