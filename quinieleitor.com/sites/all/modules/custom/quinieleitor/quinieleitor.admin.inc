@@ -4,7 +4,7 @@ use carlescliment\Quinieleitor\Match,
     carlescliment\Quinieleitor\ResultsSlip;
 
 function quinieleitor_resolve_betting_slip_page() {
-  $current_slip = quinieleitor_load_current_slip();
+  $current_slip = quinieleitor_controller()->getCurrentSlip();
   if (empty($current_slip)) {
     return 'No slip to resolve found.';
   }

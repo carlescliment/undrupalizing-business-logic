@@ -18,7 +18,6 @@ class Updater
         $this->calculator = $calculator;
     }
 
-
     public function update(ResultsSlip $results_slip, BetterSlips $better_slips)
     {
         $better_slips->calculatePrizes($results_slip, $this->calculator);

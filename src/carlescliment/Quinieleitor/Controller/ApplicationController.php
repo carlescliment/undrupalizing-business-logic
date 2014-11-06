@@ -17,6 +17,11 @@ class ApplicationController
         $this->container = $container;
     }
 
+    public function getCurrentSlip()
+    {
+        return $this->getResultsSlipRepository()->loadCurrent();
+    }
+
     public function getHallOfFame($members)
     {
         return $this->getScoreRepository()->loadHallOfFame($members);

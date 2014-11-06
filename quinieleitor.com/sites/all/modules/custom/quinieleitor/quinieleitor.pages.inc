@@ -4,7 +4,7 @@ use carlescliment\Quinieleitor\BetterSlip,
     carlescliment\Quinieleitor\Bet;
 
 function quinieleitor_bet_page() {
-  $betting_slip = quinieleitor_load_current_slip();
+  $betting_slip = quinieleitor_controller()->getCurrentSlip();
   if ($betting_slip) {
     return drupal_get_form('quinieleitor_bet_form', $betting_slip);
   }
