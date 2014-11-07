@@ -8,27 +8,13 @@ class Connection implements ConnectionInterface
 {
     private $dbQueryWrapper;
 
-    public function __construct(DBQueryWrapper $db_query_wrapper)
-    {
-        $this->dbQueryWrapper = $db_query_wrapper;
-    }
-
     public function execute($sentence, array $params = array())
     {
+        $this->dbQueryWrapper = new DBQueryWrapper();
         $query = new Query($sentence, $params);
         $query->executeWith($this->dbQueryWrapper);
 
-        return $this;
-    }
-
-    public function fetch()
-    {
-        return $this->dbQueryWrapper->fetchArray();
-    }
-
-    public function fetchAll()
-    {
-        return $this->dbQueryWrapper->fetchAll();
+        return new Statement($this->dbQueryWrapper);
     }
 
     public function lastInsertId()

@@ -18,6 +18,18 @@ class ConnectionSpec extends ObjectBehavior
         $this->shouldImplement('carlescliment\Components\DataBase\Connection');
     }
 
+    function it_returns_the_statement(\PDO $connection, \PDOStatement $statement)
+    {
+        $query = 'SELECT * FROM `table`';
+        $connection->prepare($query)->willReturn($statement);
+        $statement->execute()->willReturn(true);
+
+        $ret_statement = $this->execute($query);
+
+        $ret_statement->shouldBeAnInstanceOf('carlescliment\Components\DataBase\Adapter\PDO\Statement');
+    }
+
+
     function it_prepares_a_query_and_executes_statements(\PDO $connection, \PDOStatement $statement)
     {
         // Arrange
@@ -41,36 +53,6 @@ class ConnectionSpec extends ObjectBehavior
 
         // Act
         $this->execute($query, $params);
-    }
-
-    function it_can_fetch_all_query_data_at_same_time(\PDO $connection, \PDOStatement $statement)
-    {
-        // Arrange
-        $data = array(array('key' => 'value'), array('other_key' => 'other_value'));
-        $statement->execute()->willReturn(true);
-        $statement->fetchAll(\PDO::FETCH_ASSOC)->willReturn($data);
-        $connection->prepare(Argument::any())->willReturn($statement);
-
-        $this->execute(Argument::any());
-
-        // Act & Assert
-        $this->fetchAll()->shouldBeEqualTo($data);
-    }
-
-    function it_can_fetch_query_data_one_by_one(\PDO $connection, \PDOStatement $statement)
-    {
-        // Arrange
-        $data = array(array('key' => 'value'), array('other_key' => 'other_value'));
-        $statement->execute()->willReturn(true);
-        $statement->fetch()->willReturn($data[0], $data[1]);
-        $statement->fetch(\PDO::FETCH_ASSOC)->willReturn($data[0], $data[1]);
-        $connection->prepare(Argument::any())->willReturn($statement);
-
-        $this->execute(Argument::any());
-
-        // Act & Assert
-        $this->fetch()->shouldBeEqualTo($data[0]);
-        $this->fetch()->shouldBeEqualTo($data[1]);
     }
 
     function it_returns_last_inserted_id(\PDO $connection, \PDOStatement $statement)

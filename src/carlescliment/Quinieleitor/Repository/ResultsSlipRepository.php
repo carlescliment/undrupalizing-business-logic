@@ -19,8 +19,8 @@ class ResultsSlipRepository
 
     public function loadCurrent()
     {
-        $this->connection->execute('SELECT * FROM `betting_slips` WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
-        if ($slip_data = $this->connection->fetch()) {
+        $statement = $this->connection->execute('SELECT * FROM `betting_slips` WHERE date>NOW() AND closed=0 ORDER BY date ASC LIMIT 1');
+        if ($slip_data = $statement->fetch()) {
             return $this->buildSlipFromData($slip_data);
         }
 
@@ -29,9 +29,9 @@ class ResultsSlipRepository
 
     public function load($slip_id)
     {
-        $this->connection->execute('SELECT * FROM `betting_slips` WHERE id=:id', array(
+        $statement = $this->connection->execute('SELECT * FROM `betting_slips` WHERE id=:id', array(
             ':id' => $slip_id));
-        $slip_data = $this->connection->fetch();
+        $slip_data = $statement->fetch();
         if ($slip_data) {
             return $this->buildSlipFromData($slip_data);
         }
@@ -42,8 +42,8 @@ class ResultsSlipRepository
     public function loadAll()
     {
         $slips = array();
-        $this->connection->execute('SELECT * FROM `betting_slips` ORDER BY date ASC');
-        while ($slip_data = $this->connection->fetch()) {
+        $statement = $this->connection->execute('SELECT * FROM `betting_slips` ORDER BY date ASC');
+        while ($slip_data = $statement->fetch()) {
             $slips[] = $this->buildSlipFromData($slip_data);
         }
 
@@ -106,9 +106,9 @@ class ResultsSlipRepository
 
     private function loadSlipMatches(ResultsSlip $slip)
     {
-        $this->connection->execute('SELECT * FROM `matches` WHERE slip_id=:slip_id ORDER BY id ASC', array(
+        $statement = $this->connection->execute('SELECT * FROM `matches` WHERE slip_id=:slip_id ORDER BY id ASC', array(
             ':slip_id' => $slip->getId()));
-        while ($match = $this->connection->fetch()) {
+        while ($match = $statement->fetch()) {
             $slip->add(new Match($match['id'], $match['name'], $match['result']));
         }
     }

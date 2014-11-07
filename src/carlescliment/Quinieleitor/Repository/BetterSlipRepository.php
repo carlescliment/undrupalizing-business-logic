@@ -22,11 +22,11 @@ class BetterSlipRepository
 
     public function load($user_id, $slip_id)
     {
-        $this->connection->execute('SELECT b.* FROM `bets` b JOIN `matches` m ON b.match_id=m.id WHERE b.user_id=:better_id AND m.slip_id=:slip_id ORDER BY m.id ASC', array(
+        $statement = $this->connection->execute('SELECT b.* FROM `bets` b JOIN `matches` m ON b.match_id=m.id WHERE b.user_id=:better_id AND m.slip_id=:slip_id ORDER BY m.id ASC', array(
             ':better_id' => $user_id, 
             ':slip_id' => $slip_id));
         $better_slip = new BetterSlip($user_id, $slip_id);
-        while ($bet = $this->connection->fetch()) {
+        while ($bet = $statement->fetch()) {
             $better_slip->add(new Bet($bet['id'], $bet['match_id'], $bet['prediction']));
         }
 
@@ -47,18 +47,12 @@ class BetterSlipRepository
 
     public function loadAllByResultsSlip(ResultsSlip $results_slip)
     {
-        $uids = array();
-        $this->connection->execute('SELECT DISTINCT(b.user_id) FROM `bets` b JOIN `matches` m ON b.match_id = m.id WHERE m.slip_id = :slip_id', array(':slip_id' => $results_slip->getId()));
-        while ($row = $this->connection->fetch()) {
-            $uids[] = $row['user_id'];
-        }
+        $statement = $this->connection->execute('SELECT DISTINCT(b.user_id) FROM `bets` b JOIN `matches` m ON b.match_id = m.id WHERE m.slip_id = :slip_id', array(':slip_id' => $results_slip->getId()));
         $better_slips = new BetterSlips();
-        foreach ($uids as $uid) {
-            $better_slips->add($this->load($uid, $results_slip->getId()));
+        while ($row = $statement->fetch()) {
+            $better_slips->add($this->load($row['user_id'], $results_slip->getId()));
         }
 
         return $better_slips;
     }
-
-
 }

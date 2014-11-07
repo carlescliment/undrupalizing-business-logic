@@ -8,7 +8,6 @@ use carlescliment\Components\DataBase\Exception\DataBaseException;
 class Connection implements ConnectionInterface
 {
     private $connection;
-    private $lastStatement;
 
     public function __construct(\PDO $connection)
     {
@@ -17,24 +16,24 @@ class Connection implements ConnectionInterface
 
     public function execute($query, array $params = array())
     {
-        $this->lastStatement = $this->connection->prepare($query);
-        $this->prepareParams($params);
-        $success = $this->lastStatement->execute();
+        $statement = $this->connection->prepare($query);
+        $this->prepareParams($statement, $params);
+        $success = $statement->execute();
         if (!$success) {
-            $error = $this->lastStatement->errorInfo();
+            $error = $statement->errorInfo();
             throw new DataBaseException($error[2] . ' executing ' . $query);
         }
 
-        return $this;
+        return new Statement($statement);
     }
 
-    private function prepareParams(array $params = array())
+    private function prepareParams($statement, array $params = array())
     {
         if (!empty($params))
         {
             foreach ($params as $key => $value)
             {
-                $this->lastStatement->bindValue($key, $value, $this->getParamType($value));
+                $statement->bindValue($key, $value, $this->getParamType($value));
             }
         }
     }
@@ -51,16 +50,6 @@ class Connection implements ConnectionInterface
             return \PDO::PARAM_INT;
         }
         return \PDO::PARAM_STR;
-    }
-
-    public function fetch()
-    {
-        return $this->lastStatement->fetch(\PDO::FETCH_ASSOC);
-    }
-
-    public function fetchAll()
-    {
-        return $this->lastStatement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function lastInsertId()
